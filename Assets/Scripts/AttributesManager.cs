@@ -4,8 +4,22 @@ using UnityEngine;
 
 public class AttributesManager : MonoBehaviour
 {
-    public int health;
     public int attack;
+    public int maxHealth;
+    public int currentHealth;
+
+    void Start()
+    {
+        currentHealth = maxHealth;
+    }
+
+    void Update()
+    {
+        if(currentHealth <= 0)
+        {
+            Destroy(gameObject);
+        }
+    }
 
     public void DealDamage(GameObject target)
     {
@@ -18,6 +32,6 @@ public class AttributesManager : MonoBehaviour
     
     public void TakeDamage(int amount)
     {
-        health -= amount;
+        currentHealth -= amount;
     }
 }

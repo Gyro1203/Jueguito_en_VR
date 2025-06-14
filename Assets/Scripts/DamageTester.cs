@@ -11,7 +11,7 @@ public class DamageTester : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.O))
         {
-            if(enemyAtm.health <= 0){
+            if(enemyAtm.currentHealth <= 0){
                 Destroy(enemyAtm.gameObject);
             }else
             {
@@ -21,7 +21,7 @@ public class DamageTester : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.P))
         {
-            if(playerAtm.health <= 0){
+            if(playerAtm.currentHealth <= 0){
                 Destroy(playerAtm.gameObject);
             }else
             {

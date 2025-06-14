@@ -166,8 +166,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 622337e920732164296918c61930ed3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerAtm: {fileID: 1786489869}
-  enemyAtm: {fileID: 0}
+  playerAtm: {fileID: 0}
+  enemyAtm: {fileID: 1094840233}
 --- !u!1 &312760896
 GameObject:
   m_ObjectHideFlags: 0
@@ -1362,8 +1362,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63719b6fad05d5746b849bced6fb91f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 100
   attack: 10
+  maxHealth: 100
+  currentHealth: 0
 --- !u!136 &1094840234
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1655,8 +1656,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63719b6fad05d5746b849bced6fb91f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 100
   attack: 10
+  maxHealth: 100
+  currentHealth: 0
 --- !u!195 &1616482904
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1905,7 +1907,7 @@ MonoBehaviour:
   attackLayer:
     serializedVersion: 2
     m_Bits: 256
-  playerAtm: {fileID: 1786489869}
+  playerAtm: {fileID: 0}
   enemyAtm: {fileID: 0}
 --- !u!143 &1786489867
 CharacterController:
@@ -1962,8 +1964,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63719b6fad05d5746b849bced6fb91f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 100
   attack: 50
+  maxHealth: 100
+  currentHealth: 0
 --- !u!1 &1859733939
 GameObject:
   m_ObjectHideFlags: 0
@@ -2155,8 +2158,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63719b6fad05d5746b849bced6fb91f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 100
   attack: 10
+  maxHealth: 100
+  currentHealth: 0
 --- !u!195 &2128926501
 NavMeshAgent:
   m_ObjectHideFlags: 0

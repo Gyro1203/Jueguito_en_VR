@@ -6,8 +6,6 @@ public class DestroyObject : MonoBehaviour
 {
     //public LayerMask ground; 
     private AttributesManager playerAtm;
-    private AttributesManager enemyAtm;
-    private GameObject enemy;
     
     void Start()
     {
@@ -23,17 +21,7 @@ public class DestroyObject : MonoBehaviour
         }
 
         if(other.gameObject.layer == 8) {
-            enemy = other.gameObject;
-            enemyAtm = enemy.GetComponent<AttributesManager>();
-
-            if(enemyAtm.health < 1)
-            {
-                Destroy(enemy);
-            }else
-            {
-                playerAtm.DealDamage(enemy);
-            }
-
+            playerAtm.DealDamage(other.gameObject);
         }
     }
 }
