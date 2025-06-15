@@ -2,14 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DestroyObject : MonoBehaviour
+public class BulletScript : MonoBehaviour
 {
     //public LayerMask ground; 
     private AttributesManager playerAtm;
+    public GameObject creador;
     
     void Start()
     {
         playerAtm = GameObject.FindGameObjectWithTag("Player").GetComponent<AttributesManager>();
+        // Debug.Log("Fui creado por: " + creador);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -20,8 +22,10 @@ public class DestroyObject : MonoBehaviour
             Destroy(gameObject);
         }
 
-        if(other.gameObject.layer == 8) {
-            playerAtm.DealDamage(other.gameObject);
+        // 7 es Player, 8 es Enemy
+        if(other.gameObject.layer == 7 || other.gameObject.layer == 8) {
+            // Debug.Log(creador.GetComponent<AttributesManager>().attack);
+            creador.GetComponent<AttributesManager>().DealDamage(other.gameObject);
         }
     }
 }

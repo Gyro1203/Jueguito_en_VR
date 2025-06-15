@@ -26,6 +26,7 @@ public class PlayerMovement : MonoBehaviour
     public GameObject proyectile;
     bool alreadyAttacked;
     public float timeBetweeAttacks;
+    public Transform bulletSpawn;
 
     public float attackDistance = 50f;
     public LayerMask attackLayer;
@@ -83,10 +84,11 @@ public class PlayerMovement : MonoBehaviour
         if(Input.GetKey(KeyCode.E) && !alreadyAttacked)
         {
             /// Attack code here
-            Rigidbody rb = Instantiate(proyectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
+            Rigidbody rb = Instantiate(proyectile, bulletSpawn.position, Quaternion.identity).GetComponent<Rigidbody>();
+            rb.gameObject.GetComponent<BulletScript>().creador = this.gameObject;
             
-            rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
-            rb.AddForce(transform.up * 2f, ForceMode.Impulse);
+            rb.AddForce(bulletSpawn.forward * 32f, ForceMode.Impulse);
+            rb.AddForce(bulletSpawn.up * 2f, ForceMode.Impulse);
 
             // if(enemyAtm.health < 1){
             //     Destroy(enemyAtm.gameObject);

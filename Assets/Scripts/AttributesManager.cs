@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class AttributesManager : MonoBehaviour
 {
-    public int attack;
-    public int maxHealth;
-    public int currentHealth;
+    public float attack;
+    public float maxHealth;
+    [HideInInspector]
+    public float currentHealth;
 
     void Start()
     {
@@ -30,7 +31,7 @@ public class AttributesManager : MonoBehaviour
         }
     }
     
-    public void TakeDamage(int amount)
+    public void TakeDamage(float amount)
     {
         currentHealth -= amount;
     }

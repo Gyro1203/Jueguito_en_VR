@@ -60,6 +60,7 @@ public class EnemyAI : MonoBehaviour
         {
             /// Attack code here
             Rigidbody rb = Instantiate(proyectile, bulletSpawn.position, Quaternion.identity).GetComponent<Rigidbody>();
+            rb.gameObject.GetComponent<BulletScript>().creador = this.gameObject;
             
             rb.AddForce(bulletSpawn.forward * 32f, ForceMode.Impulse);
             rb.AddForce(bulletSpawn.up * 2f, ForceMode.Impulse);
