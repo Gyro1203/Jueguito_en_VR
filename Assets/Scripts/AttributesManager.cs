@@ -7,7 +7,7 @@ public class AttributesManager : MonoBehaviour
     public int attack;
     public int maxHealth;
     public int currentHealth;
-    [SerializeField] int currentLevel, currentExperience, maxExperience, expValue;
+    [SerializeField] public int currentLevel, currentExperience, maxExperience, expValue;
 
     private GameObject player;
  
