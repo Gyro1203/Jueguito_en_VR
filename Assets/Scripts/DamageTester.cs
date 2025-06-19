@@ -5,7 +5,7 @@ using UnityEngine;
 public class DamageTester : MonoBehaviour
 {
     public AttributesManager playerAtm;
-    public AttributesManager enemyAtm;
+    public AttributesManager enemyAtm;   
 
     private void Update()
     {

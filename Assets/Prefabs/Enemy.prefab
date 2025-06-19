@@ -840,6 +840,10 @@ MonoBehaviour:
   attack: 5
   maxHealth: 100
   currentHealth: 0
+  currentLevel: 0
+  currentExperience: 0
+  maxExperience: 0
+  expValue: 100
 --- !u!136 &4145271042832420910
 CapsuleCollider:
   m_ObjectHideFlags: 0
