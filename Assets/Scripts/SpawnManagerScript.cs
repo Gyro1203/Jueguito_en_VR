@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class SpawnManagerScript : MonoBehaviour
 {
-    public GameObject enemy;
+    public GameObject[] enemy;
+
+    private int enemyIndex;
 
     [SerializeField]
     private float enemiesAtSameTime = 5;
@@ -48,9 +50,11 @@ public class SpawnManagerScript : MonoBehaviour
     {
         Vector3 center = gameObject.transform.position;
         for(int i = 0; i < enemiesAtSameTime && enemyCounter < totalEnemiesPerWave; i++){
+
             Vector2 randomCircle = Random.insideUnitCircle * spawnSpacing;
             Vector3 spawnPosition = center + new Vector3(randomCircle.x, 0, randomCircle.y);
-            Instantiate(enemy, spawnPosition, Quaternion.identity);
+            enemyIndex = Random.Range(0, enemy.Length);
+            Instantiate(enemy[enemyIndex], spawnPosition, Quaternion.identity);
             enemyCounter ++;
             }
         }

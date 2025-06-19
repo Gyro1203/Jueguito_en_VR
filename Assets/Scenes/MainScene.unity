@@ -1916,7 +1916,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95f63af407d906e4aa7b7296ba48252d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemy: {fileID: 8505623345793657596, guid: 22880ef463387e5408f37e55e2f3aade, type: 3}
+  enemy:
+  - {fileID: 8505623345793657596, guid: 22880ef463387e5408f37e55e2f3aade, type: 3}
   enemiesAtSameTime: 5
   enemyCounter: 0
   totalEnemiesPerWave: 0
