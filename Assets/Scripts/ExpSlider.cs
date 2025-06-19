@@ -7,10 +7,17 @@ using TMPro;
 public class ExpSlider : MonoBehaviour
 {
     public Slider expSlider;
-    public AttributesManager atm;
+    private AttributesManager atm;
     private float lerpSpeed = 0.05f;
     [SerializeField] TextMeshProUGUI levelText;
+
     // Start is called before the first frame update
+    void Start()
+    {
+
+        atm = GameObject.FindGameObjectWithTag("Player").GetComponent<AttributesManager>();
+
+    }
 
     // Update is called once per frame
     void Update()

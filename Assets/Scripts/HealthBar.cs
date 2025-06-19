@@ -14,10 +14,13 @@ public class HealthBar : MonoBehaviour
     // public float maxHealth = 100f;
     // public float health;
 
-    // void Start()
-    // {
-    //     health = maxHealth;
-    // }
+    void Start()
+    {
+        if(gameObject.layer == LayerMask.NameToLayer("UI"))
+        {
+            atm = GameObject.FindGameObjectWithTag("Player").GetComponent<AttributesManager>();
+        }
+    }
 
     void Update()
     {
