@@ -20,7 +20,7 @@ public static ExperienceManager Instance;
 
   public void AddExperienceHandler(GameObject target, int amount)
   {
-    Debug.Log("EXPERIENCIA AL ENTRAR AL HANDLER: " + amount + target);
+    //Debug.Log("EXPERIENCIA AL ENTRAR AL HANDLER: " + amount + target);
     var atm = target.GetComponent<AttributesManager>();
     if (atm != null)
     {
