@@ -6,10 +6,14 @@ public class SpawnManagerScript : MonoBehaviour
 {
     public GameObject[] enemy;
 
+    private bool nextWaveScheduled = false;
+
+    private int enemiesKilledCounter;
+
     private int enemyIndex;
 
     [SerializeField]
-    private float enemiesAtSameTime = 5;
+    private float enemiesAtSameTime;
 
     [SerializeField]
     private float enemyCounter;
@@ -23,13 +27,17 @@ public class SpawnManagerScript : MonoBehaviour
     [SerializeField]
     private float spawnRate = 7f;
 
+    private float nextWaveDelay = 10f;
+
     [SerializeField]
     private float spawnTimer = 0f;
 
     // Update is called once per frame
     private void Start()
     {
-        totalEnemiesPerWave = 39;
+        totalEnemiesPerWave = 20;
+        enemiesAtSameTime = 5; 
+        enemiesKilledCounter = 0;
     }
 
     void Update()
@@ -42,6 +50,13 @@ public class SpawnManagerScript : MonoBehaviour
                 SpawnWave();
                 spawnTimer = 0f;
             }
+            nextWaveScheduled = false;
+        }
+
+        if (enemiesKilledCounter == totalEnemiesPerWave && !nextWaveScheduled)
+        {
+            Invoke("nextWave", nextWaveDelay);
+            nextWaveScheduled = true;
         }
         
     }
@@ -58,9 +73,22 @@ public class SpawnManagerScript : MonoBehaviour
             enemyCounter ++;
             }
         }
+
+    void nextWave()
+    {
+        totalEnemiesPerWave += 5;
+        enemiesAtSameTime +=2;
+        enemyCounter = 0;
     }
 
+    public void enemiesKilled()
+    {
+        enemiesKilledCounter ++;
+    }
 
+    }
+
+    
 
 
 
