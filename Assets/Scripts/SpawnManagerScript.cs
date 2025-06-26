@@ -35,7 +35,7 @@ public class SpawnManagerScript : MonoBehaviour
     // Update is called once per frame
     private void Start()
     {
-        totalEnemiesPerWave = 20;
+        totalEnemiesPerWave = 10;
         enemiesAtSameTime = 5; 
         enemiesKilledCounter = 0;
     }
@@ -76,6 +76,7 @@ public class SpawnManagerScript : MonoBehaviour
 
     void nextWave()
     {
+        enemiesKilledCounter = 0;
         totalEnemiesPerWave += 5;
         enemiesAtSameTime +=2;
         enemyCounter = 0;
