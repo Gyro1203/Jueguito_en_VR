@@ -12,6 +12,8 @@ public class SpawnManagerScript : MonoBehaviour
 
     private int enemyIndex;
 
+    public int waveCounter;
+
     [SerializeField]
     private float enemiesAtSameTime;
 
@@ -38,6 +40,7 @@ public class SpawnManagerScript : MonoBehaviour
         totalEnemiesPerWave = 10;
         enemiesAtSameTime = 5; 
         enemiesKilledCounter = 0;
+        waveCounter = 1;
     }
 
     void Update()
@@ -55,6 +58,7 @@ public class SpawnManagerScript : MonoBehaviour
 
         if (enemiesKilledCounter == totalEnemiesPerWave && !nextWaveScheduled)
         {
+            waveCounter += 1;
             Invoke("nextWave", nextWaveDelay);
             nextWaveScheduled = true;
         }
