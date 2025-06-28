@@ -11,7 +11,7 @@ public class PlayerMovement : MonoBehaviour
     public float jumpPower = 7f;
     public float gravity = 10f;
     public float lookSpeed = 5f;
-    public float lookXLimit = 45f;
+    public float lookXLimit = 50f;
     public float defaultHeight = 2f;
     public float crouchHeight = 1f;
     public float crouchSpeed = 3f;
@@ -19,26 +19,23 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 moveDirection = Vector3.zero;
     private float rotationX = 0;
     private CharacterController characterController;
-
-    private bool canMove = true;
+    private Animator animator;
+    private bool isMoving, alreadyAttacked = false, canMove = true;
 
     // Attacking System //
     public GameObject proyectile;
-    bool alreadyAttacked;
     public float timeBetweeAttacks;
     public Transform bulletSpawn;
 
     public float attackDistance = 50f;
     public LayerMask attackLayer;
 
-    public AttributesManager playerAtm;
-    public AttributesManager enemyAtm;
-
     void Start()
     {
         characterController = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -51,6 +48,9 @@ public class PlayerMovement : MonoBehaviour
         float curSpeedY = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Horizontal") : 0;
         float movementDirectionY = moveDirection.y;
         moveDirection = (forward * curSpeedX) + (right * curSpeedY);
+
+        isMoving = moveDirection.Equals(Vector3.zero);
+        //Debug.Log("Trigger: " + animator.GetBool("attack"));
 
         if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
         {
@@ -80,34 +80,41 @@ public class PlayerMovement : MonoBehaviour
             runSpeed = 12f;
         }
 
-        //Esta la hice yo xd
+        //-------| Funcion Ataque Distancia |-------
         if(Input.GetKey(KeyCode.E) && !alreadyAttacked)
         {
             /// Attack code here
+            alreadyAttacked = true;
+
             Rigidbody rb = Instantiate(proyectile, bulletSpawn.position, Quaternion.identity).GetComponent<Rigidbody>();
             rb.gameObject.GetComponent<BulletScript>().creador = this.gameObject;
             
             rb.AddForce(bulletSpawn.forward * 32f, ForceMode.Impulse);
-            rb.AddForce(bulletSpawn.up * 2f, ForceMode.Impulse);
+            rb.AddForce(bulletSpawn.up * 1f, ForceMode.Impulse);
 
-            // if(enemyAtm.health < 1){
-            //     Destroy(enemyAtm.gameObject);
-            // }else
-            // {
-            //     playerAtm.DealDamage(enemyAtm.gameObject);
-            // }
-
-            alreadyAttacked = true;
-            //LLama a una funcion luego de un tiempo definido
             Invoke(nameof(ResetAttack), timeBetweeAttacks);
         }
 
+        //------| Raycast |-------
         if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit hit, attackDistance, attackLayer))
         {
             //Debug.Log(attackLayer.value);
         }
 
+        //Movimiento
         characterController.Move(moveDirection * Time.deltaTime);
+        animator.SetBool("isRunning", !isMoving);
+
+        //-------| Funcion Ataque Meele |-------
+        if(Input.GetKey(KeyCode.Q) && !alreadyAttacked)
+        {
+            canMove = false;
+            alreadyAttacked = true;
+            animator.SetBool("isAttacking", alreadyAttacked);
+
+            //LLama a una funcion luego de un tiempo definido
+            Invoke(nameof(ResetAttack), timeBetweeAttacks);
+        }
 
         if (canMove)
         {
@@ -120,6 +127,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void ResetAttack(){
         alreadyAttacked = false;
+        canMove = true;
+        animator.SetBool("isAttacking", alreadyAttacked);
     }
 
     private void OnDrawGizmosSelected()

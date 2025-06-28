@@ -16,16 +16,18 @@ public class BulletScript : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        //Debug.Log(other.gameObject.layer);
-        // Actualmente el layer nueve es para el suelo, el if me devuelve el numero del layer
-        if(other.gameObject.layer == 9) {
-            Destroy(gameObject);
-        }
+        //Debug.Log(other.tag);
 
         // 7 es Player, 8 es Enemy
-        if(other.gameObject.layer == 7 || other.gameObject.layer == 8) {
+        if(other.gameObject.layer == 7 || other.gameObject.layer == 8)
+        {
             // Debug.Log(creador.GetComponent<AttributesManager>().attack);
-            creador.GetComponent<AttributesManager>().DealDamage(other.gameObject);
+            if(creador != null)
+            {
+                creador.GetComponent<AttributesManager>().DealDamage(other.gameObject);
+            }
         }
+
+        Destroy(gameObject);
     }
 }

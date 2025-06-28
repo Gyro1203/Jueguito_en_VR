@@ -8,9 +8,9 @@ public class HealthBar : MonoBehaviour
 {
     public Slider healthSlider;
     public Slider easeHealthSlider;
-    public AttributesManager atm;
+    private AttributesManager atm;
     private float lerpSpeed = 0.05f;
-    [SerializeField] TextMeshProUGUI life;
+    private TextMeshProUGUI life;
     // public float maxHealth = 100f;
     // public float health;
 
@@ -19,6 +19,11 @@ public class HealthBar : MonoBehaviour
         if(gameObject.layer == LayerMask.NameToLayer("UI"))
         {
             atm = GameObject.FindGameObjectWithTag("Player").GetComponent<AttributesManager>();
+            life = GetComponentInChildren<TextMeshProUGUI>();
+        }
+        else
+        {
+            atm = GetComponentInParent<AttributesManager>();
         }
     }
 
