@@ -11,18 +11,23 @@ public class EnemyAI : MonoBehaviour
     public float health;
     //public float speed = 3f;
 
+    private bool isMoving;
+    private Animator animator;
+
     public float timeBetweeAttacks;
     bool alreadyAttacked;
     public GameObject proyectile;
     public Transform bulletSpawn;
 
-    public float sightRange, attackRange;
-    public bool playerInSightRange, playerInAttackRange;
+    public float attackRange;
+    public bool playerInAttackRange;
+    private Vector3 lookPosition;
 
     private void Awake(){
         //player = GameObject.Find("Player").transform;
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
         enemy = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
     }
 
     // void Start()
@@ -40,6 +45,7 @@ public class EnemyAI : MonoBehaviour
         ChasePlayer();
         
         if(playerInAttackRange) AttackPlayer();
+        animator.SetBool("isMoving", isMoving);
 
         //transform.Translate(Vector3.forward * speed * Time.deltaTime);
         //transform.LookAt(player);
@@ -48,22 +54,27 @@ public class EnemyAI : MonoBehaviour
 
     private void ChasePlayer(){
         enemy.SetDestination(player.position);
+        isMoving = true;
     }
 
     private void AttackPlayer(){
-        //Make sure enemy doesn't move
+        isMoving = false;
+        
         enemy.SetDestination(transform.position);
 
-        transform.LookAt(player);
+        lookPosition = new Vector3(player.position.x, transform.position.y, player.position.z);
+        transform.LookAt(lookPosition);
 
         if(!alreadyAttacked)
         {
             /// Attack code here
+            animator.SetTrigger("attack");
+
             Rigidbody rb = Instantiate(proyectile, bulletSpawn.position, Quaternion.identity).GetComponent<Rigidbody>();
             rb.gameObject.GetComponent<BulletScript>().creador = this.gameObject;
-            
+                
             rb.AddForce(bulletSpawn.forward * 32f, ForceMode.Impulse);
-            rb.AddForce(bulletSpawn.up * 2f, ForceMode.Impulse);
+            rb.AddForce(bulletSpawn.up * 1f, ForceMode.Impulse);
 
 
             alreadyAttacked = true;

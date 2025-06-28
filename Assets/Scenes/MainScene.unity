@@ -1762,8 +1762,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthSlider: {fileID: 822662861}
   easeHealthSlider: {fileID: 1116412679}
-  atm: {fileID: 0}
-  life: {fileID: 1934048896}
 --- !u!1 &1684033269
 GameObject:
   m_ObjectHideFlags: 0

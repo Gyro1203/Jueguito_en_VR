@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Billboard : MonoBehaviour
 {
-    public Transform cam;
+    private Transform cam;
 
     /// Todo lo del Start no estaba incluido, pero ya que el prefab no guarda el GameObject del player
     /// lo agregue para evitar errores. Sin esto, se debe arratrar directo player hasta cam en el inspector.
