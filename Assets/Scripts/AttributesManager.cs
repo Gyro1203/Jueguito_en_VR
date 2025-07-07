@@ -12,12 +12,15 @@ public class AttributesManager : MonoBehaviour
     [SerializeField] public int currentLevel, currentExperience, maxExperience, expValue;
 
     private GameObject player;
+
+    private SpawnManagerScript spawnManager;
  
 
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
         currentHealth = maxHealth;
+        spawnManager = FindObjectOfType<SpawnManagerScript>();
     }
 
     void Update()
@@ -26,6 +29,12 @@ public class AttributesManager : MonoBehaviour
         {
             Debug.Log("VALOR DE EXP AL MATAR UN ENEMIGO: " + expValue);
             ExperienceManager.Instance.AddExperienceHandler(player, expValue);
+
+            if(spawnManager != null)
+            {
+                spawnManager.enemiesKilled();
+            }
+
             Destroy(gameObject);
         }
     }
