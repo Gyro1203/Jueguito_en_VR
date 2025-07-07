@@ -6,7 +6,7 @@ public class BulletScript : MonoBehaviour
 {
     //public LayerMask ground; 
     private AttributesManager playerAtm;
-    public GameObject creador;
+    [HideInInspector] public GameObject creador;
     
     void Start()
     {
