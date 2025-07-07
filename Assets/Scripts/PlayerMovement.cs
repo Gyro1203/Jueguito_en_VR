@@ -16,14 +16,16 @@ public class PlayerMovement : MonoBehaviour
     public float crouchHeight = 1f;
     public float crouchSpeed = 3f;
 
+    public bool isMoving, isProtected;
     private Vector3 moveDirection = Vector3.zero;
     private float rotationX = 0;
     private CharacterController characterController;
     private Animator animator;
-    private bool isMoving, alreadyAttacked = false, canMove = true;
+    private bool  alreadyAttacked = false, canMove = true;
 
     // Attacking System //
     public GameObject proyectile;
+    public Shields haveShield;
     public float timeBetweeAttacks;
     public Transform bulletSpawn;
 
@@ -33,8 +35,10 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         characterController = GetComponent<CharacterController>();
+        haveShield = GetComponentInChildren<Shields>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        isMoving = true;
         animator = GetComponent<Animator>();
     }
 
@@ -80,17 +84,16 @@ public class PlayerMovement : MonoBehaviour
             runSpeed = 12f;
         }
 
-        //-------| Funcion Ataque Distancia |-------
+        //-------| Ataque Distancia |-------
         if(Input.GetKey(KeyCode.E) && !alreadyAttacked)
         {
             /// Attack code here
             alreadyAttacked = true;
 
             Rigidbody rb = Instantiate(proyectile, bulletSpawn.position, Quaternion.identity).GetComponent<Rigidbody>();
-            rb.gameObject.GetComponent<BulletScript>().creador = this.gameObject;
             
             rb.AddForce(bulletSpawn.forward * 32f, ForceMode.Impulse);
-            rb.AddForce(bulletSpawn.up * 1f, ForceMode.Impulse);
+            rb.AddForce(bulletSpawn.up * 2f, ForceMode.Impulse);
 
             Invoke(nameof(ResetAttack), timeBetweeAttacks);
         }
@@ -105,7 +108,7 @@ public class PlayerMovement : MonoBehaviour
         characterController.Move(moveDirection * Time.deltaTime);
         animator.SetBool("isRunning", !isMoving);
 
-        //-------| Funcion Ataque Meele |-------
+        //-------| Ataque Meele |-------
         if(Input.GetKey(KeyCode.Q) && !alreadyAttacked)
         {
             canMove = false;
@@ -123,6 +126,15 @@ public class PlayerMovement : MonoBehaviour
             playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
             transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
         }
+
+        //------| Bloquear |---------
+        if(haveShield != null && Input.GetKey(KeyCode.F)) isProtected = true;
+        else isProtected = false;
+        animator.SetBool("isProtected", isProtected);
+    }
+
+    public void ProtectDamage(float dmg){
+        haveShield.TakeDamage(dmg);
     }
 
     private void ResetAttack(){

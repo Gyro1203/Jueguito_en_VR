@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - PlayerAttackPoint
+  - Enemy
+  - Arma
+  - Shield
   layers:
   - Default
   - TransparentFX
