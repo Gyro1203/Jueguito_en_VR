@@ -950,7 +950,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: XR Origin (XR Rig)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3263407954854779322, guid: acb3307d25b7df748b6f773c79e8a0b5, type: 3}
+    - {fileID: 7820322697995024887, guid: acb3307d25b7df748b6f773c79e8a0b5, type: 3}
+    - {fileID: 8389323038927398625, guid: acb3307d25b7df748b6f773c79e8a0b5, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
