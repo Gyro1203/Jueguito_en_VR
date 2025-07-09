@@ -68,7 +68,7 @@ public class AttributesManager : MonoBehaviour
     private void LevelUp()
     {
         maxHealth += 10;
-        attack += 100;
+        attack += 10;
         currentHealth = maxHealth;
         currentLevel++;
         currentExperience = 0;

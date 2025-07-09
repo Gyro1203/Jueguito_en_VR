@@ -9,6 +9,7 @@ TagManager:
   - Arma
   - Shield
   - SpawnManager
+  - HitBox
   layers:
   - Default
   - TransparentFX
