@@ -1,0 +1,34 @@
+{
+    "name": "Custome Input Actions",
+    "maps": [
+        {
+            "name": "Menu",
+            "id": "d25bea94-13c9-4789-8c31-213bd1ef28c1",
+            "actions": [
+                {
+                    "name": "MenuPressed",
+                    "type": "Button",
+                    "id": "644ba488-05fa-4e74-acac-d41754bad157",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "102edf6e-8362-48f5-ac55-fa518e913624",
+                    "path": "<Keyboard>/p",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MenuPressed",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
