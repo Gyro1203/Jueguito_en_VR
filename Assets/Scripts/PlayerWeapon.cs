@@ -29,7 +29,7 @@ public class PlayerWeapon : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player");
         playerAtm = player.GetComponent<AttributesManager>();
-        pm = player.GetComponent<PlayerMovement>();
+        // pm = player.GetComponent<PlayerMovement>();
         rb = GetComponent<Rigidbody>();
         weaponCollider = GetComponent<Collider>();
         prevPos = transform.position;
@@ -40,22 +40,23 @@ public class PlayerWeapon : MonoBehaviour
         //  No funciona con Kinematic
         //  speed = rb.velocity.magnitude;
 
-        velocity = (transform.position - prevPos) / Time.deltaTime;
-        speed = velocity.magnitude;
+        // velocity = (transform.position - prevPos) / Time.deltaTime;
+        // speed = velocity.magnitude;
+        weaponCollider.enabled = true;
 
         //Debug.Log("Is Moving:" + pm.isMoving);
         //if(speed > 1f && pm.isMoving) Debug.Log("RB Speed:" + speed);
-        
+
         // IDEA: if(isMoving) -> mitad de daño
         // Asi se evita el bloquear ataque mientras corres
         // pero no hace tanto daño como un swing
 
-        if(weaponCollider != null)
-        {
-            weaponCollider.enabled = speed > 1f;
-        }
+        // if (weaponCollider != null)
+        // {
+        //     weaponCollider.enabled = speed > 1f;
+        // }
 
-        prevPos = transform.position;
+        // prevPos = transform.position;
     }
 
     private void OnTriggerEnter(Collider other)
