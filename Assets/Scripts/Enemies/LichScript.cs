@@ -55,6 +55,10 @@ public class LichScript : MonoBehaviour
         isMoving = true;
     }
 
+    private void ResetAttack(){
+        isAttacking = false;
+    }
+
     private void AttackPlayer(){
         /// Attack code here
         isAttacking = true;
@@ -69,9 +73,21 @@ public class LichScript : MonoBehaviour
         Invoke(nameof(ResetAttack), timeBetweeAttacks);
     }
 
-    private void ResetAttack(){
-        isAttacking = false;
+    private void SummonMinions(){
+        /// Attack code here
+        isAttacking = true;
+        bulletSpawn.LookAt(player);
+        
+        Rigidbody rb = Instantiate(proyectile, bulletSpawn.position, Quaternion.identity).GetComponent<Rigidbody>();
+        rb.gameObject.GetComponent<EnemyBullets>().creador = this.gameObject;
+        
+        rb.AddForce(bulletSpawn.forward * 32f, ForceMode.Impulse);
+        rb.AddForce(bulletSpawn.up * 5f, ForceMode.Impulse);
+
+        Invoke(nameof(ResetAttack), timeBetweeAttacks);
     }
+
+    
 
     public void TakeDamage(int damage){
         health -= damage;
