@@ -26,6 +26,12 @@ public class PauseMenu : MonoBehaviour
 
     private bool activeUI = true;
 
+    public InputActionAsset inputAction;
+    private InputAction xButton;
+
+    public GameObject LeftRay;
+    public GameObject RightRay;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,32 +50,51 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
-    public void PauseButtonPressed(InputAction.CallbackContext context)
+    void OnEnable()
     {
-        //if(context.performed) 
-        Debug.Log("BOTON PRESIONADO");
-        DisplayUI();
+        var map = inputAction.FindActionMap("Menu");
+        xButton = map.FindAction("MenuPressed");
+        xButton.Enable();
+        xButton.performed += OnMenuPressed;
+    }
+
+    void OnDisable()
+    {
+        xButton.performed -= OnMenuPressed;
+        xButton.Disable();
+    }
+
+    private void OnMenuPressed(InputAction.CallbackContext context)
+    {
+        if(context.performed)
+        {
+            DisplayUI();
+        }
     }
 
     public void DisplayUI()
     {
         if(activeUI)
         {
-            HideMenu();
             menuUI.SetActive(false);
             activeUI = false;
+            LeftRay.SetActive(false);
+            RightRay.SetActive(false);
+            Time.timeScale = 1;
         }
         else if(!activeUI)
         {
+            LeftRay.SetActive(true);
+            RightRay.SetActive(true);
             menuUI.SetActive(true);
             EnableMenu();
             activeUI = true;
+            Time.timeScale = 0;
         }
     }
     
     public void EnableMenu()
     {
-        if(activeUI)
         menu.SetActive(true);
         restartConfirm.SetActive(false);
         mainMenuConfirm.SetActive(false);
@@ -77,7 +102,8 @@ public class PauseMenu : MonoBehaviour
 
     public void ResumeGame()
     {
-        
+        HideMenu();
+        DisplayUI();
     }
 
     public void RestartGame()
@@ -88,6 +114,7 @@ public class PauseMenu : MonoBehaviour
     public void ReturnToMainMenu()
     {
         HideMenu();
+        DisplayUI();
         SceneTransitionManager.singleton.GoToSceneAsync(0);
     }
 

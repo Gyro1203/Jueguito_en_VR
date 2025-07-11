@@ -4852,12 +4852,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 4774833934920885458}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &3248783593781698218 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8022706839660083832, guid: acb3307d25b7df748b6f773c79e8a0b5,
-    type: 3}
-  m_PrefabInstance: {fileID: 4774833934920885458}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4710222798405475659 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 224490070295919001, guid: acb3307d25b7df748b6f773c79e8a0b5,
@@ -4953,10 +4947,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1258763374}
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8022706839660083832, guid: acb3307d25b7df748b6f773c79e8a0b5,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 9123580715021002164}
     - targetCorrespondingSourceObject: {fileID: 3356055126878445275, guid: acb3307d25b7df748b6f773c79e8a0b5,
         type: 3}
       insertIndex: -1
@@ -5069,7 +5059,7 @@ PrefabInstance:
     - target: {fileID: 6110112530371916209, guid: f12c4ca7b3c8350408e929dbc7067241,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5113,7 +5103,7 @@ PrefabInstance:
     - target: {fileID: 2352598495986728835, guid: 3b5b501b093c68940900d992c837dba6,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3689391693649492147, guid: 3b5b501b093c68940900d992c837dba6,
         type: 3}
@@ -5311,65 +5301,10 @@ MonoBehaviour:
   returnButtons:
   - {fileID: 2117655591}
   - {fileID: 164371282}
---- !u!114 &9123580715021002164
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3248783593781698218}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: 0d8ab167353a5074b8d43d0902eda840,
+  inputAction: {fileID: -944628639613478452, guid: 0d8ab167353a5074b8d43d0902eda840,
     type: 3}
-  m_NotificationBehavior: 2
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8953740648223799628}
-        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
-        m_MethodName: PauseButtonPressed
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents:
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7840912573129521673}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 644ba488-05fa-4e74-acac-d41754bad157
-    m_ActionName: Menu/MenuPressed
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
-  m_DefaultActionMap: Menu
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
+  LeftRay: {fileID: 13657309}
+  RightRay: {fileID: 1258763373}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

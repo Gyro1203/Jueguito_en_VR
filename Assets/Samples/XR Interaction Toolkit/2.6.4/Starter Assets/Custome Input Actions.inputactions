@@ -19,7 +19,7 @@
                 {
                     "name": "",
                     "id": "102edf6e-8362-48f5-ac55-fa518e913624",
-                    "path": "<Keyboard>/p",
+                    "path": "<XRController>{LeftHand}/{PrimaryButton}",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
