@@ -21,7 +21,7 @@ public class RangeEnemy : MonoBehaviour
     private Vector3 lookPosition;
 
     private void Awake(){
-        player = GameObject.FindGameObjectWithTag("PlayerAttackPoint").GetComponent<Transform>();
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
         enemy = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         isAttacking = false;
@@ -60,7 +60,7 @@ public class RangeEnemy : MonoBehaviour
         rb.gameObject.GetComponent<EnemyBullets>().creador = this.gameObject;
         
         rb.AddForce(bulletSpawn.forward * 32f, ForceMode.Impulse);
-        rb.AddForce(bulletSpawn.up * 1f, ForceMode.Impulse);
+        rb.AddForce(bulletSpawn.up * 5f, ForceMode.Impulse);
 
         Invoke(nameof(ResetAttack), timeBetweeAttacks);
     }

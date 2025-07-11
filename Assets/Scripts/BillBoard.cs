@@ -10,7 +10,7 @@ public class Billboard : MonoBehaviour
     /// lo agregue para evitar errores. Sin esto, se debe arratrar directo player hasta cam en el inspector.
     void Start()
     {
-        cam = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>().playerCamera.transform;
+        cam = GameObject.FindGameObjectWithTag("MainCamera").transform;
     }
 
     // La barra sige la camara (vista) del jugador

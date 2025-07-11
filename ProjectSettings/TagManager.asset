@@ -8,6 +8,8 @@ TagManager:
   - Enemy
   - Arma
   - Shield
+  - SpawnManager
+  - HitBox
   layers:
   - Default
   - TransparentFX
