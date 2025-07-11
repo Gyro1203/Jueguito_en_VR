@@ -1,67 +1,46 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DiedScreen : MonoBehaviour
 {
     public float fadeDuration = 2;
-    public Material fadeMat;
-    public AnimationCurve fadeCurve;
-    public string colorPropertyName = "_Color";
-    private Renderer rend;
+    public Image YouDied;
     private bool isOut = true;
 
     // Start is called before the first frame update
     void Start()
     {
-        rend = GetComponent<Renderer>();
-        rend.enabled = false;
-        gameObject.SetActive(false);
+
     }
 
     public void FadeIn()
     {
-        Fade(1, 0);
-    }
-    
-    public void FadeOut()
-    {
-        Fade(0, 1);
+        StartCoroutine(FadeRoutine(YouDied, fadeDuration));
     }
 
-    public void Fade(float alphaIn, float alphaOut)
+    private IEnumerator FadeRoutine(Image imagen, float duracion)
     {
-        StartCoroutine(FadeRoutine(alphaIn,alphaOut));
-    }
+        Color color = imagen.color;
+        color.a = 0f;             // Asegura que empieza completamente transparente
+        imagen.color = color;
 
-    public IEnumerator FadeRoutine(float alphaIn,float alphaOut)
-    {
-        rend.enabled = true;
+        float tiempo = 0f;
 
-        float timer = 0;
-        while(timer <= fadeDuration)
+        while (tiempo < duracion)
         {
-            rend.material.SetTexture("_BaseMap", fadeMat.GetTexture("_BaseMap"));
-            Color newColor = fadeMat.GetColor("_BaseColor");
-            newColor.a = Mathf.Lerp(alphaIn, alphaOut, fadeCurve.Evaluate(timer / fadeDuration));
+            tiempo += Time.deltaTime;
+            float alpha = Mathf.Clamp01(tiempo / duracion);
 
-            rend.material.SetColor(colorPropertyName, newColor);
+            color.a = alpha;
+            imagen.color = color;
 
-            timer += Time.deltaTime;
             yield return null;
         }
 
-        Color newColor2 = fadeMat.GetColor("_BaseColor");
-        newColor2.a = alphaOut;
-        rend.material.SetColor(colorPropertyName, newColor2);
-
-        if(alphaOut == 0)
-            rend.enabled = false;
-
-        if(isOut){
-            isOut = false;
-            fadeDuration = 2;
-            Invoke(nameof(FadeIn), 2f);
-        }   
+        // Asegura que quede totalmente visible al final
+        color.a = 1f;
+        imagen.color = color;
     }
 }

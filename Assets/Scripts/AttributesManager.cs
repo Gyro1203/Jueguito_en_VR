@@ -36,8 +36,7 @@ public class AttributesManager : MonoBehaviour
     {
         if(currentHealth <= 0)
         {
-            Debug.Log("VALOR DE EXP AL MATAR UN ENEMIGO: " + expValue);
-            ExperienceManager.Instance.AddExperienceHandler(player, expValue);
+            
 
             if(spawnManager != null)
             {
@@ -46,15 +45,16 @@ public class AttributesManager : MonoBehaviour
 
             if(!imPlayer)
             {
+                Debug.Log("VALOR DE EXP AL MATAR UN ENEMIGO: " + expValue);
+                ExperienceManager.Instance.AddExperienceHandler(player, expValue);
                 Destroy(gameObject);
             }
             else if(!imDying)
             {
                 imDying = true;
                 fadeScreen.fadeDuration = 10;
-                // diedScreen.gameObject.SetActive(true);
-                // diedScreen.FadeOut();
-                died.SetActive(true);
+                diedScreen.gameObject.SetActive(true);
+                diedScreen.FadeIn();
                 player.GetComponent<ActionBasedContinuousMoveProvider>().enabled = false;
                 var interactors = player.GetComponentsInChildren<XRBaseInteractor>();
                 foreach (var interactor in interactors)
