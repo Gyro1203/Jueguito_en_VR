@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class AttributesManager : MonoBehaviour
 {
@@ -8,7 +9,11 @@ public class AttributesManager : MonoBehaviour
     public float maxHealth;
     [HideInInspector]
     public float currentHealth;
-    
+    public bool imPlayer, imDying;
+    public FadeScreen fadeScreen;
+    public DiedScreen diedScreen;
+    public GameObject died;
+
     [SerializeField] public int currentLevel, currentExperience, maxExperience, expValue;
 
     private GameObject player;
@@ -19,6 +24,10 @@ public class AttributesManager : MonoBehaviour
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
+        if(gameObject.CompareTag("Player")){
+            imPlayer = true;
+            imDying = false;
+        }
         currentHealth = maxHealth;
         spawnManager = FindObjectOfType<SpawnManagerScript>();
     }
@@ -35,7 +44,26 @@ public class AttributesManager : MonoBehaviour
                 spawnManager.enemiesKilled();
             }
 
-            Destroy(gameObject);
+            if(!imPlayer)
+            {
+                Destroy(gameObject);
+            }
+            else if(!imDying)
+            {
+                imDying = true;
+                fadeScreen.fadeDuration = 10;
+                // diedScreen.gameObject.SetActive(true);
+                // diedScreen.FadeOut();
+                died.SetActive(true);
+                player.GetComponent<ActionBasedContinuousMoveProvider>().enabled = false;
+                var interactors = player.GetComponentsInChildren<XRBaseInteractor>();
+                foreach (var interactor in interactors)
+                {
+                    interactor.enabled = false;
+                }
+                
+                SceneTransitionManager.singleton.GoToSceneAsync(0);
+            }
         }
     }
 
