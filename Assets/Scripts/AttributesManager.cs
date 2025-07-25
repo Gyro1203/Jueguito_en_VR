@@ -12,7 +12,6 @@ public class AttributesManager : MonoBehaviour
     public bool imPlayer, imDying;
     public FadeScreen fadeScreen;
     public DiedScreen diedScreen;
-    public GameObject died;
 
     [SerializeField] public int currentLevel, currentExperience, maxExperience, expValue;
 
@@ -35,8 +34,7 @@ public class AttributesManager : MonoBehaviour
     void Update()
     {
         if(currentHealth <= 0)
-        {
-            
+        { 
 
             if(spawnManager != null)
             {

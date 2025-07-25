@@ -4,41 +4,49 @@ using UnityEngine;
 
 public class LichScript : MonoBehaviour
 {
+    // Variables Base Boss
     public int rutina;
     public float cronometro;
-    public float time_rutinas;
+    public float timeBetweeAttacks;
     public Animator animator;
     public Quaternion angulo;
     public float grado;
     public GameObject target;
-    //public bool atacando;
-    // public RangoLich rango;
+    public bool isAttacking;
     public GameObject[] hit;
     public int hit_Select;
 
     //Ataque distancia
-    public GameObject proyectile;
+    public GameObject fireBall;
     public Transform bulletSpawn;
-    public float attackRange;
+    public float dangerZone;
     public List<GameObject> pool = new List<GameObject>();
 
-    //Invocacion
+    // Invocacion
     public GameObject[] enemies;
     private int enemyIndex;
     private float spawnSpacing = 10f;
 
     // TP
     public GameObject tpPoint;
+    public float tpCounter, timeBeforeEscape = 5f;
 
+    // Fases
+    public int fase = 1;
+    public float currHp, maxHp;
+    public bool dead;
+
+    public AudioSource music;
+
+
+    //  Todo lo demas
     public UnityEngine.AI.NavMeshAgent enemy;
     private Transform player;
     private AttributesManager playerATM;
     public LayerMask playerLayer;
     public float health;
 
-    private bool isMoving, isAttacking, playerInAttackRange;
-
-    public float timeBetweeAttacks;
+    private bool isMoving, playerInDangerZone;
 
     private Vector3 lookPosition;
 
@@ -49,52 +57,118 @@ public class LichScript : MonoBehaviour
         enemy = GetComponent<UnityEngine.AI.NavMeshAgent>();
         animator = GetComponent<Animator>();
         isAttacking = false;
+
+        // music.enabled = true;
+        maxHp = GetComponent<AttributesManager>().maxHealth;
+        currHp = GetComponent<AttributesManager>().currentHealth;
     }
 
     void Update()
     {
+        // PARCHE MOMENTANEO (hay que ver como manejar aqui la hp)
+        currHp = GetComponent<AttributesManager>().currentHealth;
+
+        if(currHp > 0)
+        {
+            Life();
+        }
+        else
+        {
+            if(!dead)
+            {
+              // AUN NO ESTA IMPLEMENTADO
+              // animator.SetTrigger("dead");
+              // music.enabled = false;
+              // dead = true;
+            }
+        }
+    }
+
+    public void Life()
+    {
+        if(currHp < 100)
+        {
+            fase = 2;
+            timeBetweeAttacks = 1;
+        }
+
+        BoosBehavior();
+    }
+
+    public void BoosBehavior()
+    {
         if(!playerATM.imDying)
         {
-            //Check for attack range
-            playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, playerLayer);
-
-            ChasePlayer();
+            var lookPos = player.position - transform.position;
+            lookPos.y = 0;
+            var rotation = Quaternion.LookRotation(lookPos);
+            bulletSpawn.LookAt(player.position);  // O targer.transform.position CORREGIR ROTACION EN X
             
-            if(playerInAttackRange)
+            // Detecta si el jugador esta demaciado cerca del enemigo
+            playerInDangerZone = Physics.CheckSphere(transform.position, dangerZone, playerLayer);
+            if(playerInDangerZone) tpCounter += 1 * Time.deltaTime;
+            
+            // ChasePlayer();
+            
+            if(tpCounter > timeBeforeEscape)
             {
-                isMoving = false;
+              Debug.Log("NIGERUNDAYOOOOO");
+              cronometro = 0;
+              tpCounter = 0;
+              rutina = 3; // Escapa del jugador luego de X tiempo
+            }
+            else if(!isAttacking)
+            {
+            //     isMoving = false;
                 enemy.SetDestination(transform.position);
                 lookPosition = new Vector3(player.position.x, transform.position.y, player.position.z);
-                transform.LookAt(lookPosition);
+                //transform.LookAt(lookPosition);
                 // animator.SetBool("attack", !isAttacking);
 
                 switch (rutina)
                 {
                     case 0:
                         // Controlador Rutina
+                        transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, 5f);
+                        
                         cronometro += 1 * Time.deltaTime;
                         if(cronometro > timeBetweeAttacks) //time_rutinas
                         {
-                            rutina = Random.Range(0, 3);
+                            rutina = Random.Range(0, 4); // Valor maximo + 1 (Val. máximo es exclusivo [documentación])
                             cronometro = 0;
                         }
                         break;
                     case 1:
                         //Invocar minions
+                        transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, 2f);
+
+                        // animator.SetBool("isMoving", false);
                         animator.SetBool("attack", false);
-                        animator.SetBool("isMoving", false);
-                        animator.SetBool("summon", true);
+                        animator.SetBool("teleport", false);
+                        // animator.SetBool("skills", 0);
+                        if(fase == 1) animator.SetBool("summon", true);
+                        else animator.SetBool("summon", true);
                         break;
                     case 2:
                         //Ataque Distancia
-                        animator.SetBool("isMoving", false);
+                        // animator.SetBool("isMoving", false);
                         animator.SetBool("summon", false);
+                        animator.SetBool("teleport", false);
                         animator.SetBool("attack", true);
+                        // animator.SetBool("skills", 0);
+                        transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, 0.5f);
+                        break;
+                    case 3:
+                        //TP
+                        // animator.SetBool("isMoving", false);
+                        animator.SetBool("summon", false);
+                        animator.SetBool("attack", false);
+                        animator.SetBool("teleport", true);
                         break;
                 }
-            } 
+            }
 
-            animator.SetBool("isMoving", isMoving);
+            // animator.SetBool("isMoving", isMoving);
         }
     }
 
@@ -106,20 +180,43 @@ public class LichScript : MonoBehaviour
     public void ResetAttack(){
         animator.SetBool("attack", false);
         animator.SetBool("summon", false);
+        animator.SetBool("teleport", false);
         rutina = 0;
         isAttacking = false;
+    
+    }
+
+    public GameObject GetFireBall()
+    {
+        // Este codigo recicla los proyectiles en caso de lanzar varios
+        for(int i = 0; i < pool.Count; i++)
+        {
+          if(!pool[i].activeInHierarchy)
+          {
+            pool[i].SetActive(true);
+            return pool[i];
+          }
+        }
+        GameObject obj = Instantiate(fireBall, bulletSpawn.position, bulletSpawn.rotation) as GameObject;
+        obj.GetComponent<LichBullets>().creador = this.gameObject;
+        pool.Add(obj);
+        return obj;
     }
 
     private void AttackPlayer(){
         /// Attack code here
         isAttacking = true;
-        bulletSpawn.LookAt(player);
+        // bulletSpawn.LookAt(player);
         
-        Rigidbody rb = Instantiate(proyectile, bulletSpawn.position, Quaternion.identity).GetComponent<Rigidbody>();
-        rb.gameObject.GetComponent<EnemyBullets>().creador = this.gameObject;
+        // Rigidbody rb = Instantiate(fireBall, bulletSpawn.position, Quaternion.identity).GetComponent<Rigidbody>();
+        // rb.gameObject.GetComponent<EnemyBullets>().creador = this.gameObject;
         
-        rb.AddForce(bulletSpawn.forward * 32f, ForceMode.Impulse);
-        rb.AddForce(bulletSpawn.up * 5f, ForceMode.Impulse);
+        // rb.AddForce(bulletSpawn.forward * 32f, ForceMode.Impulse);
+        // rb.AddForce(bulletSpawn.up * 5f, ForceMode.Impulse);
+
+        GameObject obj = GetFireBall();
+        obj.transform.position = bulletSpawn.transform.position;
+        obj.transform.rotation = bulletSpawn.transform.rotation;
 
         //Invoke(nameof(ResetAttack), timeBetweeAttacks);
     }
@@ -141,10 +238,11 @@ public class LichScript : MonoBehaviour
 
     private void Teleport()
     {
+        isAttacking = true;
         Vector3 center = tpPoint.transform.position;
         Vector2 randomCircle = Random.insideUnitCircle * 50;
         Vector3 tpPosition = center + new Vector3(randomCircle.x, 0, randomCircle.y);
-        gameObject.transform.position = tpPosition.transform.position;
+        gameObject.transform.position = tpPosition;
     }
     
 
@@ -162,6 +260,6 @@ public class LichScript : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        Gizmos.DrawWireSphere(transform.position, dangerZone);
     }
 }

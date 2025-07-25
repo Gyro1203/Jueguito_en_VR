@@ -5,11 +5,8 @@ using UnityEngine;
 public class LichBullets : MonoBehaviour
 {
     public float cronometro;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+
+    [HideInInspector] public GameObject creador;
 
     // Update is called once per frame
     void Update()
@@ -21,5 +18,15 @@ public class LichBullets : MonoBehaviour
             cronometro = 0;
         }
         transform.Translate(Vector3.forward * 15 * Time.deltaTime);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.tag == "Player" && creador != null)
+        {
+            creador.GetComponent<AttributesManager>().DealDamage(other.gameObject);
+        }
+        
+        // Destroy(gameObject);
     }
 }
