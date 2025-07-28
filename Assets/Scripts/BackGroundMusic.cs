@@ -9,7 +9,7 @@ public class BackGroundMusic : MonoBehaviour
     public AudioSource bossMusicSource;
 
     public AudioClip[] battleMusics;
-    public AudioClip bossMusic;
+    public AudioClip[] bossMusic;
 
     // Start is called before the first frame update
     
@@ -21,6 +21,18 @@ public class BackGroundMusic : MonoBehaviour
     }
 
     public void StopBattleMusic()
+    {
+        battleMusicSource.Stop();
+    }
+
+    public void PlayBossMusic()
+    {
+        int index = Random.Range(0, battleMusics.Length);
+        battleMusicSource.clip = battleMusics[index];
+        battleMusicSource.Play();
+    }
+
+    public void StopBossMusic()
     {
         battleMusicSource.Stop();
     }

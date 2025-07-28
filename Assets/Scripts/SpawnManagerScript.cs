@@ -64,9 +64,23 @@ public class SpawnManagerScript : MonoBehaviour
 
     void Update()
     {
+        // Si el contador de oleadas es impar y no hay jefes, se spawnea un jefe
+        if (waveCounter % 3 == 0)
+        {
+            SpawnBoss();
+            audioManager.PlayBossMusic();
+            nextWaveScheduled = false;
+        }else
+        {
         // Si el contador de enemigos es menor que el total de enemigos por oleada, se spawnean enemigos
         if (enemyCounter < totalEnemiesPerWave)
         {
+             if (!isCombatMusicPlaying)
+            {
+                audioManager.PlayBattleMusic();
+                isCombatMusicPlaying = true;
+            }
+
             spawnTimer += Time.deltaTime;
             if (spawnTimer >= spawnRate)
             {
@@ -75,29 +89,10 @@ public class SpawnManagerScript : MonoBehaviour
             }
             nextWaveScheduled = false;
         }
+        }
+
         // Si el contador de enemigos asesinados es igual al total de enemigos por oleada, se inicia la siguiente oleada
         if (enemiesKilledCounter == totalEnemiesPerWave && !nextWaveScheduled)
-        {
-            waveCounter += 1;
-            Invoke("nextWave", nextWaveDelay);
-            nextWaveScheduled = true;
-        }
-        // Si el contador de oleadas es par y no hay jefes, se spawnea un jefe
-        // if (waveCounter % 2 == 0 && bossCounter == 0)
-        // {
-        //     SpawnBoss();
-        //     nextWaveScheduled = false;
-        // }
-        
-        if (enemiesKilledCounter != totalEnemiesPerWave)
-        {
-            if (!isCombatMusicPlaying)
-            {
-                audioManager.PlayBattleMusic();
-                isCombatMusicPlaying = true;
-            }
-        }
-        else
         {
             if (isCombatMusicPlaying)
             {
@@ -105,6 +100,9 @@ public class SpawnManagerScript : MonoBehaviour
                 audioManager.StopBattleMusic();
                 isCombatMusicPlaying = false;
             }
+            waveCounter += 1;
+            Invoke("nextWave", nextWaveDelay);
+            nextWaveScheduled = true;
         }
         
     }
@@ -141,21 +139,18 @@ public class SpawnManagerScript : MonoBehaviour
         enemiesKilledCounter ++;
     }
     // Método para spawnear jefes en una posición aleatoria dentro de un círculo alrededor del objeto
-    // void SpawnBoss()
-    //     {
-    //         Vector3 center = gameObject.transform.position;
-    //         for (int i = 0; i < boss.Length; i++)
-    //         {
-    //             Vector2 randomCircle = Random.insideUnitCircle * spawnSpacing;
-    //             Vector3 spawnPosition = center + new Vector3(randomCircle.x, 0, randomCircle.y);
-    //             Instantiate(boss[i], spawnPosition, Quaternion.identity);
-    //             bossCounter++;
-    //         }
+    void SpawnBoss()
+        {
+            Vector3 center = gameObject.transform.position;
+            for (int i = 0; i < boss.Length; i++)
+            {
+                Vector2 randomCircle = Random.insideUnitCircle * spawnSpacing;
+                Vector3 spawnPosition = center + new Vector3(randomCircle.x, 0, randomCircle.y);
+                Instantiate(boss[i], spawnPosition, Quaternion.identity);
+                bossCounter++;
+            }
             
-    //     }
-
-    
-
+        }
 }
 
     
