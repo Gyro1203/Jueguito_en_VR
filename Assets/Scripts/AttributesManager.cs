@@ -45,7 +45,7 @@ public class AttributesManager : MonoBehaviour
             {
                 Debug.Log("VALOR DE EXP AL MATAR UN ENEMIGO: " + expValue);
                 ExperienceManager.Instance.AddExperienceHandler(player, expValue);
-                Destroy(gameObject);
+                //Destroy(gameObject);
             }
             else if(!imDying)
             {

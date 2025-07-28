@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class LichBullets : MonoBehaviour
 {
-    public float cronometro;
+    public float damage;
+    private float cronometro;
 
-    [HideInInspector] public GameObject creador;
+    [HideInInspector] public GameObject target;
 
     // Update is called once per frame
     void Update()
@@ -17,14 +18,14 @@ public class LichBullets : MonoBehaviour
             gameObject.SetActive(false);
             cronometro = 0;
         }
-        transform.Translate(Vector3.forward * 15 * Time.deltaTime);
+        transform.Translate(Vector3.forward * 20 * Time.deltaTime);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.tag == "Player" && creador != null)
+        if(other.gameObject.tag == "Player" && target != null)
         {
-            creador.GetComponent<AttributesManager>().DealDamage(other.gameObject);
+            target.GetComponent<AttributesManager>().TakeDamage(damage);
         }
         
         // Destroy(gameObject);
