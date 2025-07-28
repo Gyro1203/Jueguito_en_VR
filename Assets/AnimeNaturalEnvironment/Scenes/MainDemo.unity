@@ -28455,7 +28455,7 @@ PrefabInstance:
     - target: {fileID: 6598815579406187037, guid: 18ddb545287c546e19cc77dc9fbb2189,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -67702,7 +67702,7 @@ PrefabInstance:
     - target: {fileID: 3459832141787393478, guid: ad933471a3088704cb132c68ae879a37,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.16
       objectReference: {fileID: 0}
     - target: {fileID: 3459832141787393478, guid: ad933471a3088704cb132c68ae879a37,
         type: 3}
@@ -67744,6 +67744,26 @@ PrefabInstance:
       propertyPath: m_Volume
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5734829896186948777, guid: ad933471a3088704cb132c68ae879a37,
+        type: 3}
+      propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].value
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7043053169988758310, guid: ad933471a3088704cb132c68ae879a37,
+        type: 3}
+      propertyPath: bossMusic.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 0fba11e786d4dd34eb1cd18deb2301cd, type: 3}
+    - target: {fileID: 7043053169988758310, guid: ad933471a3088704cb132c68ae879a37,
+        type: 3}
+      propertyPath: battleMusics.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 74a36b69f05a3e2498958fa64fb3aaf4, type: 3}
+    - target: {fileID: 7043053169988758310, guid: ad933471a3088704cb132c68ae879a37,
+        type: 3}
+      propertyPath: battleMusics.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: 024767a232e3e04439997a43ef29a8c9, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

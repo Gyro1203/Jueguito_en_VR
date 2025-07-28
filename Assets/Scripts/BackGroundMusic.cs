@@ -27,14 +27,14 @@ public class BackGroundMusic : MonoBehaviour
 
     public void PlayBossMusic()
     {
-        int index = Random.Range(0, battleMusics.Length);
-        battleMusicSource.clip = battleMusics[index];
-        battleMusicSource.Play();
+        int index = Random.Range(0, bossMusic.Length);
+        bossMusicSource.clip = bossMusic[index];
+        bossMusicSource.Play();
     }
 
     public void StopBossMusic()
     {
-        battleMusicSource.Stop();
+        bossMusicSource.Stop();
     }
 
 }
