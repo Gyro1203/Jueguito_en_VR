@@ -10,7 +10,8 @@ public class MeleeEnemy : MonoBehaviour
     private AttributesManager playerATM;
     public LayerMask playerLayer;
     private Animator animator;
-    public float health;
+    public float currHp, maxHp;
+    public bool dead;
 
     private bool canMove, canAttack, playerInAttackRange;
 
@@ -24,31 +25,57 @@ public class MeleeEnemy : MonoBehaviour
         playerATM = player.GetComponent<AttributesManager>();
         enemy = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        maxHp = GetComponent<AttributesManager>().maxHealth;
+        currHp = GetComponent<AttributesManager>().currentHealth;
         canAttack = true;
         canMove = true;
     }
 
     void Update()
     {
-        if(!playerATM.imDying){
-            //Check for attack range
-            playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, playerLayer);
+        currHp = GetComponent<AttributesManager>().currentHealth;
+        
+        if(currHp > 0)
+        {
+            if(!playerATM.imDying){
+                //Check for attack range
+                playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, playerLayer);
 
-            if(canMove) ChasePlayer();
-            
-            if(playerInAttackRange)
-            {
-                canMove = false;
-                enemy.SetDestination(transform.position);
-                lookPosition = new Vector3(player.position.x, transform.position.y, player.position.z);
-                transform.LookAt(lookPosition);
-                if(canAttack)
+                if(canMove) ChasePlayer();
+                
+                if(playerInAttackRange)
                 {
-                    animator.SetBool("attack", canAttack);
+                    canMove = false;
+                    enemy.SetDestination(transform.position);
+                    lookPosition = new Vector3(player.position.x, transform.position.y, player.position.z);
+                    transform.LookAt(lookPosition);
+                    if(canAttack)
+                    {
+                        animator.SetBool("attack", canAttack);
+                    }
                 }
-            }
 
-            animator.SetBool("run", canMove);
+                animator.SetBool("run", canMove);
+            }
+        }
+        else
+        {
+            // if(!dead)
+            // {
+            //   animator.SetTrigger("dead");
+            //   // music.enabled = false;
+            //   dead = true;
+            //   cronometro = 0;
+            // }
+            // else
+            // {
+            //   cronometro += 1 * Time.deltaTime;
+            //   if(cronometro > timeAfterDespawn)
+            //   {
+            //     Destroy(gameObject);
+            //   }
+            // }
+            Destroy(gameObject);
         }
     }
 
@@ -66,17 +93,6 @@ public class MeleeEnemy : MonoBehaviour
     private void ResetAttack(){
         canAttack = true;
         canMove = true;
-    }
-
-    public void TakeDamage(int damage){
-        health -= damage;
-        
-        if(health <= 0) Invoke(nameof(DestroyEnemy), 0.5f);
-    }
-
-    private void DestroyEnemy()
-    {
-        Destroy(gameObject);
     }
 
     private void OnDrawGizmosSelected()

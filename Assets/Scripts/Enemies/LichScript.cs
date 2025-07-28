@@ -16,6 +16,14 @@ public class LichScript : MonoBehaviour
     private AttributesManager playerATM;
     public LayerMask playerLayer;
 
+    // VFX
+    [Header("Particilas")]
+    [SerializeField] private ParticleSystem spawnCircle;
+    [SerializeField] private ParticleSystem summonCircle;
+    [SerializeField] private ParticleSystem chargedPink;
+    [SerializeField] private ParticleSystem chargedRed;
+    [SerializeField] private ParticleSystem teleportVFX;
+
     // Fases
     [Header("Fase")]
     public int fase = 1;
@@ -47,9 +55,7 @@ public class LichScript : MonoBehaviour
 
     // Knockback (NO IMPLEMENTADO)
     [Header("Knockback")]
-    public float dangerZone;
     private Rigidbody pjRb;
-    private bool playerInDangerZone;
 
     private void Awake(){
         player = GameObject.FindGameObjectWithTag("Player"); // Actually no se usa pero lo dejo por si acaso
@@ -96,7 +102,7 @@ public class LichScript : MonoBehaviour
 
     public void Life()
     {
-        if(currHp < 100)
+        if(currHp < (maxHp/2))
         {
             fase = 2;
             timeBetweeAttacks = 1;
@@ -118,7 +124,6 @@ public class LichScript : MonoBehaviour
 
             // Detecta si el jugador esta demaciado cerca del enemigo
             playerInWarningZone = Physics.CheckSphere(transform.position, warningZone, playerLayer);
-            playerInDangerZone = Physics.CheckSphere(transform.position, dangerZone, playerLayer);
             if(playerInWarningZone && !isAttacking) tpCounter += 1 * Time.deltaTime;
             
             if(tpCounter > timeBeforeEscape)
@@ -126,7 +131,7 @@ public class LichScript : MonoBehaviour
               Debug.Log("NIGERUNDAYOOOOO");
               cronometro = 0;
               tpCounter = 0;
-              rutina = 3; // Escapa del jugador luego de X tiempo
+              rutina = 5; // Escapa del jugador luego de X tiempo
             }
             else if(!isAttacking)
             {
@@ -221,12 +226,17 @@ public class LichScript : MonoBehaviour
                         else{
                           animator.SetBool("superAttack", false);
                           animator.SetBool("attack", true);
-                          animator.SetFloat("skillsF1", 0.5f); 
+                          animator.SetFloat("skillsF1", 1); 
                         }
                         break;
                 }
             }
         }
+    }
+    
+    private void PlaySpawn()
+    {
+      spawnCircle.Play();
     }
 
     public void ResetAttack(){
@@ -287,6 +297,11 @@ public class LichScript : MonoBehaviour
         return obj;
     }
 
+    private void PlayCharged()
+    {
+      chargedPink.Play();
+    }
+
     private void ChargedAttack(){
         /// Attack code here
         isAttacking = true;
@@ -312,6 +327,12 @@ public class LichScript : MonoBehaviour
         return obj;
     }
 
+    private void PlaySuperCharged()
+    {
+      chargedPink.Stop();
+      chargedRed.Play();
+    }
+
     private void SuperChargedAttack(){
         /// Attack code here
         isAttacking = true;
@@ -324,6 +345,7 @@ public class LichScript : MonoBehaviour
         /// Summoning code here
         
         isAttacking = true;
+        summonCircle.Play();
         for(int i = 0; i < 3; i++){
             Vector3 center = gameObject.transform.position;
             Vector2 randomCircle = Random.insideUnitCircle * spawnSpacing;
@@ -336,6 +358,7 @@ public class LichScript : MonoBehaviour
     private void Teleport()
     {
         isAttacking = true;
+        teleportVFX.Play();
         Vector3 center = tpPoint.transform.position;
         Vector2 randomCircle = Random.insideUnitCircle * 50;
         Vector3 tpPosition = center + new Vector3(randomCircle.x, 0, randomCircle.y);
@@ -360,7 +383,5 @@ public class LichScript : MonoBehaviour
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, warningZone);
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, dangerZone);
     }
 }
