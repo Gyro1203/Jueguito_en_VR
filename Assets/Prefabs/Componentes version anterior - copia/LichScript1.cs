@@ -16,6 +16,14 @@ public class LichScript1 : MonoBehaviour
     private AttributesManager playerATM;
     public LayerMask playerLayer;
 
+    // VFX
+    [Header("Particilas")]
+    [SerializeField] private ParticleSystem spawnCircle;
+    [SerializeField] private ParticleSystem summonCircle;
+    [SerializeField] private ParticleSystem chargedPink;
+    [SerializeField] private ParticleSystem chargedRed;
+    [SerializeField] private ParticleSystem teleportVFX;
+
     // Fases
     [Header("Fase")]
     public int fase = 1;
@@ -61,14 +69,14 @@ public class LichScript1 : MonoBehaviour
         isAttacking = false;
 
         // music.enabled = true;
-        maxHp = GetComponent<AttributesManager1>().maxHealth;
-        currHp = GetComponent<AttributesManager1>().currentHealth;
+        maxHp = GetComponent<AttributesManager>().maxHealth;
+        currHp = GetComponent<AttributesManager>().currentHealth;
     }
 
     void Update()
     {
         // PARCHE MOMENTANEO (hay que ver como manejar aqui la hp)
-        currHp = GetComponent<AttributesManager1>().currentHealth;
+        currHp = GetComponent<AttributesManager>().currentHealth;
 
         if(currHp > 0)
         {
