@@ -10,7 +10,7 @@ public class SpawnManagerScript : MonoBehaviour
 
     public GameObject[] boss;
     // declara variables para controlar el spawn de enemigos y jefes
-    private int bossCounter;
+    private bool bossSpawned = false;
 
     BackGroundMusic audioManager;
 
@@ -50,11 +50,10 @@ public class SpawnManagerScript : MonoBehaviour
     // Update is called once per frame
     private void Start()
     {
-        totalEnemiesPerWave = 10;
-        enemiesAtSameTime = 5; 
+        totalEnemiesPerWave = 5;
+        enemiesAtSameTime = 2; 
         enemiesKilledCounter = 0;
         waveCounter = 1;
-        bossCounter = 0;
     }
 
     private void Awake()
@@ -67,9 +66,15 @@ public class SpawnManagerScript : MonoBehaviour
         // Si el contador de oleadas es impar y no hay jefes, se spawnea un jefe
         if (waveCounter % 3 == 0)
         {
+            if(!bossSpawned)
+            {
             SpawnBoss();
             audioManager.PlayBossMusic();
+            bossSpawned = true;
             nextWaveScheduled = false;
+            }
+        
+        return;
         }else
         {
         // Si el contador de enemigos es menor que el total de enemigos por oleada, se spawnean enemigos
@@ -129,8 +134,8 @@ public class SpawnManagerScript : MonoBehaviour
     void nextWave()
     {
         enemiesKilledCounter = 0;
-        totalEnemiesPerWave += 5;
-        enemiesAtSameTime +=2;
+        totalEnemiesPerWave += 3;
+        enemiesAtSameTime +=1;
         enemyCounter = 0;
     }
     // Método para incrementar el contador de enemigos asesinados
@@ -147,10 +152,17 @@ public class SpawnManagerScript : MonoBehaviour
                 Vector2 randomCircle = Random.insideUnitCircle * spawnSpacing;
                 Vector3 spawnPosition = center + new Vector3(randomCircle.x, 0, randomCircle.y);
                 Instantiate(boss[i], spawnPosition, Quaternion.identity);
-                bossCounter++;
             }
             
         }
+    // Método que se llama cuando un jefe es asesinado
+    public void OnBossKilled()
+    {
+        audioManager.StopBossMusic();
+        bossSpawned = false;
+        waveCounter++;
+        Invoke("nextWave", nextWaveDelay);
+    }
 }
 
     

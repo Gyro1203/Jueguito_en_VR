@@ -34,7 +34,11 @@ public class AttributesManager : MonoBehaviour
             {
                 spawnManager.enemiesKilled();
             }
-
+            // Si el objeto es un jefe, llama al método OnBossKilled del SpawnManagerScript
+            if (gameObject.layer == LayerMask.NameToLayer("Boss"))
+            {
+                spawnManager.OnBossKilled();
+            }
             Destroy(gameObject);
         }
     }
