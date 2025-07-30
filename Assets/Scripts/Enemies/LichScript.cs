@@ -102,7 +102,7 @@ public class LichScript : MonoBehaviour
 
     public void Life()
     {
-        if(currHp < (maxHp/2))
+        if(currHp < 100)
         {
             fase = 2;
             timeBetweeAttacks = 1;
@@ -135,7 +135,7 @@ public class LichScript : MonoBehaviour
             }
             else if(!isAttacking)
             {
-                enemy.SetDestination(transform.position);
+                // enemy.SetDestination(transform.position);
 
                 switch (rutina)
                 {
@@ -146,7 +146,8 @@ public class LichScript : MonoBehaviour
                         cronometro += 1 * Time.deltaTime;
                         if(cronometro > timeBetweeAttacks)
                         {
-                            rutina = Random.Range(0, 6); // Valor maximo + 1 (Val. máximo es exclusivo [documentación])
+                            // rutina = Random.Range(0, 6); // Valor maximo + 1 (Val. máximo es exclusivo [documentación])
+                            rutina = 5;
                             cronometro = 0;
                         }
                         break;
@@ -217,6 +218,7 @@ public class LichScript : MonoBehaviour
                     case 5:   
                         //TP
 
+                        // enemy.enabled = false;
                         if(fase == 2 )
                         {
                           animator.SetBool("attack", false);
@@ -358,11 +360,13 @@ public class LichScript : MonoBehaviour
     private void Teleport()
     {
         isAttacking = true;
-        teleportVFX.Play();
+        // teleportVFX.Play();
         Vector3 center = tpPoint.transform.position;
         Vector2 randomCircle = Random.insideUnitCircle * 50;
         Vector3 tpPosition = center + new Vector3(randomCircle.x, 0, randomCircle.y);
+        Debug.Log("POSICION: " + tpPosition);
         gameObject.transform.position = tpPosition;
+        // enemy.enabled = true;
     }
 
     private void Knockback()
