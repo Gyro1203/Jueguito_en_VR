@@ -46,6 +46,10 @@ public class AttributesManager : MonoBehaviour
                 imDying = true;
                 Debug.Log("VALOR DE EXP AL MATAR UN ENEMIGO: " + expValue);
                 ExperienceManager.Instance.AddExperienceHandler(player, expValue);
+                if (gameObject.layer == LayerMask.NameToLayer("Boss"))
+                {
+                    spawnManager.OnBossKilled();
+                }
                 //Destroy(gameObject);
             }
             else if(!imDying)
@@ -63,6 +67,7 @@ public class AttributesManager : MonoBehaviour
                 
                 SceneTransitionManager.singleton.GoToSceneAsync(0);
             }
+
         }
     }
 
