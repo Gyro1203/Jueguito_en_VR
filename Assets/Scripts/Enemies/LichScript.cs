@@ -5,16 +5,16 @@ using UnityEngine;
 public class LichScript : MonoBehaviour
 {
     // Variables Base Boss
-    public int rutina;
-    public float cronometro, timeBetweeAttacks, timeAfterDespawn = 5f;
+    public UnityEngine.AI.NavMeshAgent enemy;
+    public LayerMask playerLayer;
     public Animator animator;
-    public bool isAttacking;
     public AudioSource music;
 
-    public UnityEngine.AI.NavMeshAgent enemy;
+    private int rutina;
+    private float cronometro, timeBetweeAttacks, timeAfterDespawn = 5f;
+    private bool isAttacking;
     private GameObject player;
     private AttributesManager playerATM;
-    public LayerMask playerLayer;
 
     // VFX
     [Header("Particilas")]
@@ -25,9 +25,8 @@ public class LichScript : MonoBehaviour
     [SerializeField] private ParticleSystem teleportVFX;
 
     // Fases
-    [Header("Fase")]
-    public int fase = 1;
-    public float currHp, maxHp;
+    private int fase = 1;
+    private AttributesManager atm;
     public bool dead;
 
     //Ataque distancia
@@ -36,9 +35,9 @@ public class LichScript : MonoBehaviour
     public GameObject chargedFireBall;
     public GameObject superChargedFireBall;
     public Transform bulletSpawn;
-    public List<GameObject> firePool = new List<GameObject>();
-    public List<GameObject> chargedPool = new List<GameObject>();
-    public List<GameObject> superChargedPool = new List<GameObject>();
+    private List<GameObject> firePool = new List<GameObject>();
+    private List<GameObject> chargedPool = new List<GameObject>();
+    private List<GameObject> superChargedPool = new List<GameObject>();
     private GameObject mainCam;
 
     // Invocacion
@@ -50,7 +49,7 @@ public class LichScript : MonoBehaviour
     // TP
     [Header("Teleport")]
     public GameObject tpPoint;
-    public float warningZone, tpCounter, timeBeforeEscape = 5f;
+    private float warningZone, tpCounter, timeBeforeEscape = 5f;
     private bool playerInWarningZone;
 
     // Knockback (NO IMPLEMENTADO)
@@ -67,45 +66,49 @@ public class LichScript : MonoBehaviour
         isAttacking = false;
 
         // music.enabled = true;
-        maxHp = GetComponent<AttributesManager>().maxHealth;
-        currHp = GetComponent<AttributesManager>().currentHealth;
+        atm = GetComponent<AttributesManager>();
+        atm.inmortal = true;
     }
 
     void Update()
     {
         // PARCHE MOMENTANEO (hay que ver como manejar aqui la hp)
-        currHp = GetComponent<AttributesManager>().currentHealth;
 
-        if(currHp > 0)
+        if(!atm.inmortal)
         {
-            Life();
-        }
-        else
-        {
-            if(!dead)
+            if(atm.currentHealth > 0)
             {
-              animator.SetTrigger("dead");
-              // music.enabled = false;
-              dead = true;
-              cronometro = 0;
+                Life();
             }
             else
             {
-              cronometro += 1 * Time.deltaTime;
-              if(cronometro > timeAfterDespawn)
-              {
-                Destroy(gameObject);
-              }
+                if(!dead)
+                {
+                  animator.SetTrigger("dead");
+                  // music.enabled = false;
+                  dead = true;
+                  cronometro = 0;
+                }
+                else
+                {
+                  cronometro += 1 * Time.deltaTime;
+                  if(cronometro > timeAfterDespawn)
+                  {
+                    Destroy(gameObject);
+                  }
+                }
             }
         }
     }
 
     public void Life()
     {
-        if(currHp < 100)
+        if(fase == 1 && atm.currentHealth < 100)
         {
             fase = 2;
             timeBetweeAttacks = 1;
+            animator.SetTrigger("fase2");
+            atm.inmortal = true;
         }
 
         BoosBehavior();
@@ -146,6 +149,7 @@ public class LichScript : MonoBehaviour
                         if(cronometro > timeBetweeAttacks)
                         {
                             rutina = Random.Range(0, 6); // Valor maximo + 1 (Val. máximo es exclusivo [documentación])
+                            // rutina = 3;  // Para probar ataques
                             cronometro = 0;
                         }
                         break;
@@ -236,6 +240,12 @@ public class LichScript : MonoBehaviour
     private void PlaySpawn()
     {
       spawnCircle.Play();
+      atm.inmortal = true;
+    }
+
+    private void CanContinue()
+    {
+      atm.inmortal = false;
     }
 
     public void ResetAttack(){

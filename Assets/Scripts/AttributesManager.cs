@@ -7,11 +7,11 @@ public class AttributesManager : MonoBehaviour
 {
     public float attack;
     public float maxHealth;
-    [HideInInspector]
-    public float currentHealth;
-    public bool imPlayer, imDying;
     public FadeScreen fadeScreen;
     public DiedScreen diedScreen;
+     public bool inmortal = false;
+    [HideInInspector] public float currentHealth;
+    [HideInInspector] public bool imPlayer, imDying;
 
     [SerializeField] public int currentLevel, currentExperience, maxExperience, expValue;
 
@@ -76,7 +76,10 @@ public class AttributesManager : MonoBehaviour
     
     public void TakeDamage(float amount)
     {
-        currentHealth -= amount;
+        if (!inmortal)
+        {
+            currentHealth -= amount;
+        }
     }
 
 
