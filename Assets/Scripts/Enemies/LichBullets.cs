@@ -18,7 +18,7 @@ public class LichBullets : MonoBehaviour
             gameObject.SetActive(false);
             cronometro = 0;
         }
-        transform.Translate(Vector3.forward * 30 * Time.deltaTime);
+        transform.Translate(Vector3.forward * 50 * Time.deltaTime);
     }
 
     private void OnTriggerEnter(Collider other)

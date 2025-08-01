@@ -1686,15 +1686,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attack: 2
   maxHealth: 50
+  fadeScreen: {fileID: 0}
+  diedScreen: {fileID: 0}
+  inmortal: 0
   currentHealth: 0
   imPlayer: 0
   imDying: 0
-  fadeScreen: {fileID: 0}
-  diedScreen: {fileID: 0}
   currentLevel: 0
   currentExperience: 0
   maxExperience: 0
-  expValue: 10
+  expValue: 1
 --- !u!114 &1435805937767778751
 MonoBehaviour:
   m_ObjectHideFlags: 0

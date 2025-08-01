@@ -5,13 +5,14 @@ using UnityEngine;
 public class LichScript : MonoBehaviour
 {
     // Variables Base Boss
-    public UnityEngine.AI.NavMeshAgent enemy;
+    // public UnityEngine.AI.NavMeshAgent enemy;
+    public GameObject boss; //Componente Padre (Necesario para evitar errores en la animación)
     public LayerMask playerLayer;
     public Animator animator;
     public AudioSource music;
 
     private int rutina;
-    private float cronometro, timeBetweeAttacks, timeAfterDespawn = 5f;
+    private float cronometro, timeBetweeAttacks = 2, timeAfterDespawn = 5f;
     private bool isAttacking;
     private GameObject player;
     private AttributesManager playerATM;
@@ -49,7 +50,7 @@ public class LichScript : MonoBehaviour
     // TP
     [Header("Teleport")]
     public GameObject tpPoint;
-    private float warningZone, tpCounter, timeBeforeEscape = 5f;
+    private float warningZone = 4f, tpCounter, timeBeforeEscape = 5f;
     private bool playerInWarningZone;
 
     // Knockback (NO IMPLEMENTADO)
@@ -59,10 +60,12 @@ public class LichScript : MonoBehaviour
     private void Awake(){
         player = GameObject.FindGameObjectWithTag("Player"); // Actually no se usa pero lo dejo por si acaso
         mainCam = GameObject.FindGameObjectWithTag("MainCamera");
+        gameObject.transform.LookAt(mainCam.transform.position);
         // pjRb = player.GetComponent<Rigidbody>();
         playerATM = player.GetComponent<AttributesManager>();
-        enemy = GetComponent<UnityEngine.AI.NavMeshAgent>();
-        animator = GetComponent<Animator>();
+        // enemy = GetComponent<UnityEngine.AI.NavMeshAgent>();
+        tpPoint = GameObject.FindGameObjectWithTag("SpawnManager");
+        animator = GetComponentInChildren<Animator>();
         isAttacking = false;
 
         // music.enabled = true;
@@ -94,7 +97,20 @@ public class LichScript : MonoBehaviour
                   cronometro += 1 * Time.deltaTime;
                   if(cronometro > timeAfterDespawn)
                   {
-                    Destroy(gameObject);
+                    for(int i = 0; i < firePool.Count; i++)
+                    {
+                      Destroy(firePool[i].gameObject);
+                    }
+                    for(int i = 0; i < chargedPool.Count; i++)
+                    {
+                      Destroy(chargedPool[i].gameObject);
+                    }
+                    for(int i = 0; i < superChargedPool.Count; i++)
+                    {
+                      Destroy(superChargedPool[i].gameObject);
+                    }
+                      
+                    Destroy(boss);
                   }
                 }
             }
@@ -103,10 +119,12 @@ public class LichScript : MonoBehaviour
 
     public void Life()
     {
-        if(fase == 1 && atm.currentHealth < 100)
+        if(fase == 1 && atm.currentHealth < (atm.maxHealth/2))
         {
             fase = 2;
             timeBetweeAttacks = 1;
+            timeBeforeEscape = 2;
+            warningZone = 8f;
             animator.SetTrigger("fase2");
             atm.inmortal = true;
         }
@@ -126,9 +144,13 @@ public class LichScript : MonoBehaviour
 
             // Detecta si el jugador esta demaciado cerca del enemigo
             playerInWarningZone = Physics.CheckSphere(transform.position, warningZone, playerLayer);
-            if(playerInWarningZone && !isAttacking) tpCounter += 1 * Time.deltaTime;
+            if(playerInWarningZone && !isAttacking)
+            {
+              tpCounter += 1 * Time.deltaTime;
+              Debug.Log(tpCounter);
+            } 
             
-            if(tpCounter > timeBeforeEscape)
+            if(tpCounter > timeBeforeEscape && !isAttacking)
             {
               Debug.Log("NIGERUNDAYOOOOO");
               cronometro = 0;
@@ -137,7 +159,7 @@ public class LichScript : MonoBehaviour
             }
             else if(!isAttacking)
             {
-                enemy.SetDestination(transform.position);
+                // enemy.SetDestination(transform.position);
 
                 switch (rutina)
                 {
@@ -376,7 +398,7 @@ public class LichScript : MonoBehaviour
         Vector2 randomCircle = Random.insideUnitCircle * 50;
         Vector3 tpPosition = center + new Vector3(randomCircle.x, 0, randomCircle.y);
  
-        gameObject.transform.position = tpPosition;
+        boss.transform.position = tpPosition;
     }
 
     private void Knockback()

@@ -41,8 +41,9 @@ public class AttributesManager : MonoBehaviour
                 spawnManager.enemiesKilled();
             }
 
-            if(!imPlayer)
+            if(!imPlayer && !imDying)
             {
+                imDying = true;
                 Debug.Log("VALOR DE EXP AL MATAR UN ENEMIGO: " + expValue);
                 ExperienceManager.Instance.AddExperienceHandler(player, expValue);
                 //Destroy(gameObject);
