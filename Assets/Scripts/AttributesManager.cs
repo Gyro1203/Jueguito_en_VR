@@ -1,14 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class AttributesManager : MonoBehaviour
 {
     public float attack;
     public float maxHealth;
-    [HideInInspector]
-    public float currentHealth;
-    
+    public FadeScreen fadeScreen;
+    public DiedScreen diedScreen;
+     public bool inmortal = false;
+    [HideInInspector] public float currentHealth;
+    [HideInInspector] public bool imPlayer, imDying;
+
     [SerializeField] public int currentLevel, currentExperience, maxExperience, expValue;
 
     private GameObject player;
@@ -19,6 +23,10 @@ public class AttributesManager : MonoBehaviour
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
+        if(gameObject.CompareTag("Player")){
+            imPlayer = true;
+            imDying = false;
+        }
         currentHealth = maxHealth;
         spawnManager = FindObjectOfType<SpawnManagerScript>();
     }
@@ -26,20 +34,40 @@ public class AttributesManager : MonoBehaviour
     void Update()
     {
         if(currentHealth <= 0)
-        {
-            Debug.Log("VALOR DE EXP AL MATAR UN ENEMIGO: " + expValue);
-            ExperienceManager.Instance.AddExperienceHandler(player, expValue);
+        { 
 
             if(spawnManager != null)
             {
                 spawnManager.enemiesKilled();
             }
-            // Si el objeto es un jefe, llama al método OnBossKilled del SpawnManagerScript
-            if (gameObject.layer == LayerMask.NameToLayer("Boss"))
+
+            if(!imPlayer && !imDying)
             {
-                spawnManager.OnBossKilled();
+                imDying = true;
+                Debug.Log("VALOR DE EXP AL MATAR UN ENEMIGO: " + expValue);
+                ExperienceManager.Instance.AddExperienceHandler(player, expValue);
+                if (gameObject.layer == LayerMask.NameToLayer("Boss"))
+                {
+                    spawnManager.OnBossKilled();
+                }
+                //Destroy(gameObject);
             }
-            Destroy(gameObject);
+            else if(!imDying)
+            {
+                imDying = true;
+                fadeScreen.fadeDuration = 10;
+                diedScreen.gameObject.SetActive(true);
+                diedScreen.FadeIn();
+                player.GetComponent<ActionBasedContinuousMoveProvider>().enabled = false;
+                var interactors = player.GetComponentsInChildren<XRBaseInteractor>();
+                foreach (var interactor in interactors)
+                {
+                    interactor.enabled = false;
+                }
+                
+                SceneTransitionManager.singleton.GoToSceneAsync(0);
+            }
+
         }
     }
 
@@ -54,7 +82,10 @@ public class AttributesManager : MonoBehaviour
     
     public void TakeDamage(float amount)
     {
-        currentHealth -= amount;
+        if (!inmortal)
+        {
+            currentHealth -= amount;
+        }
     }
 
 

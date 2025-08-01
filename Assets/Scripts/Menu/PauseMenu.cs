@@ -31,11 +31,14 @@ public class PauseMenu : MonoBehaviour
 
     public GameObject LeftRay;
     public GameObject RightRay;
+    private AttributesManager atm;
 
     // Start is called before the first frame update
     void Start()
     {
         DisplayUI();
+
+        atm = GameObject.FindGameObjectWithTag("Player").GetComponent<AttributesManager>();
 
         //Hook events
         resumeButtom.onClick.AddListener(ResumeGame);
@@ -66,7 +69,7 @@ public class PauseMenu : MonoBehaviour
 
     private void OnMenuPressed(InputAction.CallbackContext context)
     {
-        if(context.performed)
+        if(context.performed && !atm.imDying)
         {
             DisplayUI();
         }

@@ -119,7 +119,7 @@ public class SpawnManagerScript : MonoBehaviour
 
             Vector2 randomCircle = Random.insideUnitCircle * spawnSpacing;
             Vector3 spawnPosition = center + new Vector3(randomCircle.x, 0, randomCircle.y);
-
+            
             RaycastHit hit;
             if (Physics.Raycast(spawnPosition + Vector3.up * 10f, Vector3.down, out hit, 20f, groundLayer))
            {

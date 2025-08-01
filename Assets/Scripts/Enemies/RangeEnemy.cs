@@ -7,6 +7,7 @@ public class RangeEnemy : MonoBehaviour
 {
     public NavMeshAgent enemy;
     private Transform player;
+    private AttributesManager playerATM;
     public LayerMask playerLayer;
     private Animator animator;
     public float health;
@@ -22,6 +23,7 @@ public class RangeEnemy : MonoBehaviour
 
     private void Awake(){
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+        playerATM = player.GetComponent<AttributesManager>();
         enemy = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         isAttacking = false;
@@ -29,21 +31,24 @@ public class RangeEnemy : MonoBehaviour
 
     void Update()
     {
-        //Check for attack range
-        playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, playerLayer);
-
-        ChasePlayer();
-        
-        if(playerInAttackRange)
+        if(!playerATM.imDying)
         {
-            isMoving = false;
-            enemy.SetDestination(transform.position);
-            lookPosition = new Vector3(player.position.x, transform.position.y, player.position.z);
-            transform.LookAt(lookPosition);
-            animator.SetBool("attack", !isAttacking);
-        } 
+            //Check for attack range
+            playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, playerLayer);
 
-        animator.SetBool("isMoving", isMoving);
+            ChasePlayer();
+            
+            if(playerInAttackRange)
+            {
+                isMoving = false;
+                enemy.SetDestination(transform.position);
+                lookPosition = new Vector3(player.position.x, transform.position.y, player.position.z);
+                transform.LookAt(lookPosition);
+                animator.SetBool("attack", !isAttacking);
+            } 
+
+            animator.SetBool("isMoving", isMoving);
+        }
     }
 
     private void ChasePlayer(){
