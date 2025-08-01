@@ -49409,7 +49409,7 @@ GameObject:
   - component: {fileID: 844442773672542724}
   - component: {fileID: 1201650828033181976}
   - component: {fileID: 8577711861801434746}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Lich
   m_TagString: Enemy
   m_Icon: {fileID: 0}

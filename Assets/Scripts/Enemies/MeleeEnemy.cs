@@ -10,7 +10,7 @@ public class MeleeEnemy : MonoBehaviour
     private AttributesManager playerATM;
     public LayerMask playerLayer;
     private Animator animator;
-    public float currHp, maxHp;
+    private AttributesManager atm;
     public bool dead;
 
     private bool canMove, canAttack, playerInAttackRange;
@@ -25,17 +25,15 @@ public class MeleeEnemy : MonoBehaviour
         playerATM = player.GetComponent<AttributesManager>();
         enemy = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
-        maxHp = GetComponent<AttributesManager>().maxHealth;
-        currHp = GetComponent<AttributesManager>().currentHealth;
+        atm = GetComponent<AttributesManager>();
         canAttack = true;
         canMove = true;
     }
 
     void Update()
     {
-        currHp = GetComponent<AttributesManager>().currentHealth;
         
-        if(currHp > 0)
+        if(atm.currentHealth > 0)
         {
             if(!playerATM.imDying){
                 //Check for attack range

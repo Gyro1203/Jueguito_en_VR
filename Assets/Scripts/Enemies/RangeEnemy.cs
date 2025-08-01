@@ -8,6 +8,7 @@ public class RangeEnemy : MonoBehaviour
     public NavMeshAgent enemy;
     private Transform player;
     private AttributesManager playerATM;
+    private AttributesManager atm;
     public LayerMask playerLayer;
     private Animator animator;
     public float health;
@@ -26,28 +27,51 @@ public class RangeEnemy : MonoBehaviour
         playerATM = player.GetComponent<AttributesManager>();
         enemy = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        atm = GetComponent<AttributesManager>();
         isAttacking = false;
     }
 
     void Update()
     {
-        if(!playerATM.imDying)
+        if(atm.currentHealth > 0)
         {
-            //Check for attack range
-            playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, playerLayer);
-
-            ChasePlayer();
-            
-            if(playerInAttackRange)
+            if(!playerATM.imDying)
             {
-                isMoving = false;
-                enemy.SetDestination(transform.position);
-                lookPosition = new Vector3(player.position.x, transform.position.y, player.position.z);
-                transform.LookAt(lookPosition);
-                animator.SetBool("attack", !isAttacking);
-            } 
+                //Check for attack range
+                playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, playerLayer);
 
-            animator.SetBool("isMoving", isMoving);
+                ChasePlayer();
+                
+                if(playerInAttackRange)
+                {
+                    isMoving = false;
+                    enemy.SetDestination(transform.position);
+                    lookPosition = new Vector3(player.position.x, transform.position.y, player.position.z);
+                    transform.LookAt(lookPosition);
+                    animator.SetBool("attack", !isAttacking);
+                } 
+
+                animator.SetBool("isMoving", isMoving);
+            }
+        }
+        else
+        {
+            // if(!dead)
+            // {
+            //   animator.SetTrigger("dead");
+            //   // music.enabled = false;
+            //   dead = true;
+            //   cronometro = 0;
+            // }
+            // else
+            // {
+            //   cronometro += 1 * Time.deltaTime;
+            //   if(cronometro > timeAfterDespawn)
+            //   {
+            //     Destroy(gameObject);
+            //   }
+            // }
+            Destroy(gameObject);
         }
     }
 

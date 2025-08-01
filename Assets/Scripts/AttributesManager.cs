@@ -108,6 +108,6 @@ public class AttributesManager : MonoBehaviour
         currentLevel++;
         currentExperience = 0;
 
-        maxExperience += 100;
+        maxExperience += 200;
     }
 }
