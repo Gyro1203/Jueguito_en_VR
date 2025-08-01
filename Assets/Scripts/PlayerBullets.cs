@@ -23,7 +23,7 @@ public class PlayerBullets : MonoBehaviour
             cronometro = 0;
             Destroy(gameObject);
         }
-        transform.Translate(Vector3.forward * 10 * Time.deltaTime);
+        transform.Translate(Vector3.forward * 30 * Time.deltaTime);
     }
 
     private void OnTriggerEnter(Collider other)
