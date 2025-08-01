@@ -75,8 +75,8 @@ public class SpawnManagerScript : MonoBehaviour
             enemyIndex = Random.Range(0, enemy.Length);
             Instantiate(enemy[enemyIndex], spawnPosition, Quaternion.identity);
             enemyCounter ++;
-            }
         }
+    }
 
     void nextWave()
     {

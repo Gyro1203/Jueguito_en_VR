@@ -1,0 +1,423 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class LichScript : MonoBehaviour
+{
+    // Variables Base Boss
+    // public UnityEngine.AI.NavMeshAgent enemy;
+    public GameObject boss; //Componente Padre (Necesario para evitar errores en la animación)
+    public LayerMask playerLayer;
+    public Animator animator;
+    public AudioSource music;
+
+    private int rutina;
+    private float cronometro, timeBetweeAttacks = 2, timeAfterDespawn = 5f;
+    private bool isAttacking;
+    private GameObject player;
+    private AttributesManager playerATM;
+
+    // VFX
+    [Header("Particilas")]
+    [SerializeField] private ParticleSystem spawnCircle;
+    [SerializeField] private ParticleSystem summonCircle;
+    [SerializeField] private ParticleSystem chargedPink;
+    [SerializeField] private ParticleSystem chargedRed;
+    [SerializeField] private ParticleSystem teleportVFX;
+
+    // Fases
+    private int fase = 1;
+    private AttributesManager atm;
+    public bool dead;
+
+    //Ataque distancia
+    [Header("Ataque a distancia")]
+    public GameObject fireBall;
+    public GameObject chargedFireBall;
+    public GameObject superChargedFireBall;
+    public Transform bulletSpawn;
+    private List<GameObject> firePool = new List<GameObject>();
+    private List<GameObject> chargedPool = new List<GameObject>();
+    private List<GameObject> superChargedPool = new List<GameObject>();
+    private GameObject mainCam;
+
+    // Invocacion
+    [Header("Invocacion")]
+    public GameObject[] enemies;
+    private int enemyIndex;
+    private float spawnSpacing = 10f;
+
+    // TP
+    [Header("Teleport")]
+    public GameObject tpPoint;
+    private float warningZone = 4f, tpCounter, timeBeforeEscape = 5f;
+    private bool playerInWarningZone;
+
+    // Knockback (NO IMPLEMENTADO)
+    [Header("Knockback")]
+    private Rigidbody pjRb;
+
+    private void Awake(){
+        player = GameObject.FindGameObjectWithTag("Player"); // Actually no se usa pero lo dejo por si acaso
+        mainCam = GameObject.FindGameObjectWithTag("MainCamera");
+        gameObject.transform.LookAt(mainCam.transform.position);
+        // pjRb = player.GetComponent<Rigidbody>();
+        playerATM = player.GetComponent<AttributesManager>();
+        // enemy = GetComponent<UnityEngine.AI.NavMeshAgent>();
+        tpPoint = GameObject.FindGameObjectWithTag("SpawnManager");
+        animator = GetComponentInChildren<Animator>();
+        isAttacking = false;
+
+        // music.enabled = true;
+        atm = GetComponent<AttributesManager>();
+        atm.inmortal = true;
+    }
+
+    void Update()
+    {
+        // PARCHE MOMENTANEO (hay que ver como manejar aqui la hp)
+
+        if(!atm.inmortal)
+        {
+            if(atm.currentHealth > 0)
+            {
+                Life();
+            }
+            else
+            {
+                if(!dead)
+                {
+                  animator.SetTrigger("dead");
+                  // music.enabled = false;
+                  dead = true;
+                  cronometro = 0;
+                }
+                else
+                {
+                  cronometro += 1 * Time.deltaTime;
+                  if(cronometro > timeAfterDespawn)
+                  {
+                    for(int i = 0; i < firePool.Count; i++)
+                    {
+                      Destroy(firePool[i].gameObject);
+                    }
+                    for(int i = 0; i < chargedPool.Count; i++)
+                    {
+                      Destroy(chargedPool[i].gameObject);
+                    }
+                    for(int i = 0; i < superChargedPool.Count; i++)
+                    {
+                      Destroy(superChargedPool[i].gameObject);
+                    }
+                      
+                    Destroy(boss);
+                  }
+                }
+            }
+        }
+    }
+
+    public void Life()
+    {
+        if(fase == 1 && atm.currentHealth < (atm.maxHealth/2))
+        {
+            fase = 2;
+            timeBetweeAttacks = 1;
+            timeBeforeEscape = 2;
+            warningZone = 8f;
+            animator.SetTrigger("fase2");
+            atm.inmortal = true;
+        }
+
+        BoosBehavior();
+    }
+
+    public void BoosBehavior()
+    {
+        if(!playerATM.imDying)
+        {
+            var lookPos = player.transform.position - transform.position;
+            lookPos.y = 0;
+            var rotation = Quaternion.LookRotation(lookPos);
+            bulletSpawn.LookAt(mainCam.transform.position);  // O player.transform.position CORREGIR ROTACION EN X
+            // Parche momentaneo. Posible solucion -> Añadir objeto vacio como target del enemigo
+
+            // Detecta si el jugador esta demaciado cerca del enemigo
+            playerInWarningZone = Physics.CheckSphere(transform.position, warningZone, playerLayer);
+            if(playerInWarningZone && !isAttacking)
+            {
+              tpCounter += 1 * Time.deltaTime;
+              Debug.Log(tpCounter);
+            } 
+            
+            if(tpCounter > timeBeforeEscape && !isAttacking)
+            {
+              Debug.Log("NIGERUNDAYOOOOO");
+              cronometro = 0;
+              tpCounter = 0;
+              rutina = 5; // Escapa del jugador luego de X tiempo
+            }
+            else if(!isAttacking)
+            {
+                // enemy.SetDestination(transform.position);
+
+                switch (rutina)
+                {
+                    case 0:
+                        // Controlador Rutina
+                        transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, 5f);
+                        
+                        cronometro += 1 * Time.deltaTime;
+                        if(cronometro > timeBetweeAttacks)
+                        {
+                            rutina = Random.Range(0, 6); // Valor maximo + 1 (Val. máximo es exclusivo [documentación])
+                            // rutina = 3;  // Para probar ataques
+                            cronometro = 0;
+                        }
+                        break;
+                    case 1:
+                        //Ataque 1
+
+                        if(fase == 2 )
+                        {
+                          animator.SetBool("attack", false);
+                          animator.SetBool("superAttack", true);
+                          animator.SetFloat("skillsF2", 0);
+                        }
+                        else{
+                          animator.SetBool("superAttack", false);
+                          animator.SetBool("attack", true);
+                          animator.SetFloat("skillsF1", 0);
+                        }
+                        transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, 0.5f);
+                        break;
+                    case 2:
+                        //Ataque 2
+
+                        if(fase == 2 )
+                        {
+                          animator.SetBool("attack", false);
+                          animator.SetBool("superAttack", true);
+                          animator.SetFloat("skillsF2", 0.25f);
+                        }
+                        else{
+                          animator.SetBool("superAttack", false);
+                          animator.SetBool("attack", true);
+                          animator.SetFloat("skillsF1", 0.25f);
+                        }
+                        transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, 0.5f);
+                        break;
+                    case 3:
+                        //Ataque Cargado
+
+                        if(fase == 2 )
+                        {
+                          animator.SetBool("attack", false);
+                          animator.SetBool("superAttack", true);
+                          animator.SetFloat("skillsF2", 0.5f);
+                        }
+                        else{
+                          animator.SetBool("superAttack", false);
+                          animator.SetBool("attack", true);
+                          animator.SetFloat("skillsF1", 0.5f);
+                        }
+                        transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, 0.5f);
+                        break;
+                    case 4:
+                        //Invocar minions
+                        transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, 2f);
+
+                        if(fase == 2 )
+                        {
+                          animator.SetBool("attack", false);
+                          animator.SetBool("superAttack", true);
+                          animator.SetFloat("skillsF2", 0.75f);
+                        }
+                        else{
+                          animator.SetBool("superAttack", false);
+                          animator.SetBool("attack", true);
+                          animator.SetFloat("skillsF1", 0.75f);
+                        }
+                        break;
+                    case 5:   
+                        //TP
+
+                        if(fase == 2 )
+                        {
+                          animator.SetBool("attack", false);
+                          animator.SetBool("superAttack", true);
+                          animator.SetFloat("skillsF2", 1);
+                        }
+                        else{
+                          animator.SetBool("superAttack", false);
+                          animator.SetBool("attack", true);
+                          animator.SetFloat("skillsF1", 1); 
+                        }
+                        break;
+                }
+            }
+        }
+    }
+    
+    private void PlaySpawn()
+    {
+      spawnCircle.Play();
+      atm.inmortal = true;
+    }
+
+    private void CanContinue()
+    {
+      atm.inmortal = false;
+    }
+
+    public void ResetAttack(){
+        animator.SetBool("attack", false);
+        animator.SetBool("superAttack", false);
+        rutina = 0;
+        isAttacking = false;
+    
+    }
+
+    public GameObject GetFireBall()
+    {
+        // Este codigo recicla los proyectiles en caso de lanzar varios
+        for(int i = 0; i < firePool.Count; i++)
+        {
+            if(!firePool[i].activeInHierarchy)
+            {
+              firePool[i].SetActive(true);
+              return firePool[i];
+            }
+        }
+        GameObject obj = Instantiate(fireBall, bulletSpawn.position, bulletSpawn.rotation) as GameObject;
+        obj.GetComponent<LichBullets>().target = player;
+        firePool.Add(obj);
+        return obj;
+    }
+
+    private void FireBallAttack(){
+        /// Attack code here
+        isAttacking = true;
+        // bulletSpawn.LookAt(player.transform);
+        
+        // Rigidbody rb = Instantiate(fireBall, bulletSpawn.position, Quaternion.identity).GetComponent<Rigidbody>();
+        // rb.gameObject.GetComponent<EnemyBullets>().creador = this.gameObject;
+        
+        // rb.AddForce(bulletSpawn.forward * 32f, ForceMode.Impulse);
+        // rb.AddForce(bulletSpawn.up * 5f, ForceMode.Impulse);
+
+        GameObject obj = GetFireBall();
+        obj.transform.position = bulletSpawn.transform.position;
+        obj.transform.rotation = bulletSpawn.transform.rotation;
+    }
+
+    public GameObject GetPinkFireBall()
+    {
+        // Este codigo recicla los proyectiles en caso de lanzar varios
+        for(int i = 0; i < chargedPool.Count; i++)
+        {
+            if(!chargedPool[i].activeInHierarchy)
+            {
+              chargedPool[i].SetActive(true);
+              return chargedPool[i];
+            }
+        }
+        GameObject obj = Instantiate(chargedFireBall, bulletSpawn.position, bulletSpawn.rotation) as GameObject;
+        obj.GetComponent<LichBullets>().target = player;
+        chargedPool.Add(obj);
+        return obj;
+    }
+
+    private void PlayCharged()
+    {
+      chargedPink.Play();
+    }
+
+    private void ChargedAttack(){
+        /// Attack code here
+        isAttacking = true;
+        GameObject obj = GetPinkFireBall();
+        obj.transform.position = bulletSpawn.transform.position;
+        obj.transform.rotation = bulletSpawn.transform.rotation;
+    }
+
+    public GameObject GetRedFireBall()
+    {
+        // Este codigo recicla los proyectiles en caso de lanzar varios
+        for(int i = 0; i < superChargedPool.Count; i++)
+        {
+            if(!superChargedPool[i].activeInHierarchy)
+            {
+              superChargedPool[i].SetActive(true);
+              return superChargedPool[i];
+            }
+        }
+        GameObject obj = Instantiate(superChargedFireBall, bulletSpawn.position, bulletSpawn.rotation) as GameObject;
+        obj.GetComponent<LichBullets>().target = player;
+        superChargedPool.Add(obj);
+        return obj;
+    }
+
+    private void PlaySuperCharged()
+    {
+      chargedPink.Stop();
+      chargedRed.Play();
+    }
+
+    private void SuperChargedAttack(){
+        /// Attack code here
+        isAttacking = true;
+        GameObject obj = GetRedFireBall();
+        obj.transform.position = bulletSpawn.transform.position;
+        obj.transform.rotation = bulletSpawn.transform.rotation;
+    }
+
+    private void SummonMinions(){
+        /// Summoning code here
+        
+        isAttacking = true;
+        summonCircle.Play();
+        for(int i = 0; i < 3; i++){
+            Vector3 center = gameObject.transform.position;
+            Vector2 randomCircle = Random.insideUnitCircle * spawnSpacing;
+            Vector3 spawnPosition = center + new Vector3(randomCircle.x, 0, randomCircle.y);
+            enemyIndex = Random.Range(0, enemies.Length);
+            Instantiate(enemies[enemyIndex], spawnPosition, Quaternion.identity);
+        }
+    }
+
+    private void TPAnim()
+    {
+        teleportVFX.Play();
+    }
+
+    private void Teleport()
+    {
+        isAttacking = true;
+        Vector3 center = tpPoint.transform.position;
+        Vector2 randomCircle = Random.insideUnitCircle * 50;
+        Vector3 tpPosition = center + new Vector3(randomCircle.x, 0, randomCircle.y);
+ 
+        boss.transform.position = tpPosition;
+    }
+
+    private void Knockback()
+    {
+        isAttacking = true;
+        if(pjRb)
+        {
+            Vector3 direction = (pjRb.transform.position - transform.position).normalized;
+            pjRb.AddForce(direction * 10f, ForceMode.Impulse);
+        }
+        else
+        {
+            Debug.LogWarning("No player found in danger zone for knockback.");
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, warningZone);
+    }
+}
