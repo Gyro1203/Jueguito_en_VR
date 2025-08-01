@@ -34,7 +34,7 @@ public class SpawnManagerScript : MonoBehaviour
     private float totalEnemiesPerWave;
 
     [SerializeField]
-    private float spawnSpacing = 50f;
+    private float spawnSpacing = 30f;
 
     [SerializeField]
     private float spawnRate = 7f;
@@ -50,8 +50,8 @@ public class SpawnManagerScript : MonoBehaviour
     // Update is called once per frame
     private void Start()
     {
-        totalEnemiesPerWave = 5;
-        enemiesAtSameTime = 2; 
+        totalEnemiesPerWave = 20; // Cuantos enemigos spawnean por oleada
+        enemiesAtSameTime = 5; // Cuantos enemigos spawnean por iteracion
         enemiesKilledCounter = 0;
         waveCounter = 1;
     }
@@ -134,8 +134,8 @@ public class SpawnManagerScript : MonoBehaviour
     void nextWave()
     {
         enemiesKilledCounter = 0;
-        totalEnemiesPerWave += 3;
-        enemiesAtSameTime +=1;
+        totalEnemiesPerWave += 5;
+        enemiesAtSameTime +=3;
         enemyCounter = 0;
     }
     // Método para incrementar el contador de enemigos asesinados
@@ -159,6 +159,7 @@ public class SpawnManagerScript : MonoBehaviour
     public void OnBossKilled()
     {
         audioManager.StopBossMusic();
+        enemiesKilledCounter = 0;
         bossSpawned = false;
         waveCounter++;
         Invoke("nextWave", nextWaveDelay);
