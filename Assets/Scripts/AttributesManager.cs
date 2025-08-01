@@ -7,12 +7,11 @@ public class AttributesManager : MonoBehaviour
 {
     public float attack;
     public float maxHealth;
-    [HideInInspector]
-    public float currentHealth;
-    public bool imPlayer, imDying;
     public FadeScreen fadeScreen;
     public DiedScreen diedScreen;
-    public GameObject died;
+     public bool inmortal = false;
+    [HideInInspector] public float currentHealth;
+    [HideInInspector] public bool imPlayer, imDying;
 
     [SerializeField] public int currentLevel, currentExperience, maxExperience, expValue;
 
@@ -35,19 +34,19 @@ public class AttributesManager : MonoBehaviour
     void Update()
     {
         if(currentHealth <= 0)
-        {
-            
+        { 
 
             if(spawnManager != null)
             {
                 spawnManager.enemiesKilled();
             }
 
-            if(!imPlayer)
+            if(!imPlayer && !imDying)
             {
+                imDying = true;
                 Debug.Log("VALOR DE EXP AL MATAR UN ENEMIGO: " + expValue);
                 ExperienceManager.Instance.AddExperienceHandler(player, expValue);
-                Destroy(gameObject);
+                //Destroy(gameObject);
             }
             else if(!imDying)
             {
@@ -78,7 +77,10 @@ public class AttributesManager : MonoBehaviour
     
     public void TakeDamage(float amount)
     {
-        currentHealth -= amount;
+        if (!inmortal)
+        {
+            currentHealth -= amount;
+        }
     }
 
 
